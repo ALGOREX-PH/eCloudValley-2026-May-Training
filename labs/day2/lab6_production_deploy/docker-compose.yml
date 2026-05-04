@@ -1,0 +1,15 @@
+services:
+  agent:
+    build:
+      context: ../../..   # repo root, so the Dockerfile sees the whole project
+      dockerfile: labs/day2/lab6_production_deploy/Dockerfile
+    image: cloudkaiju-agent:latest
+    container_name: cloudkaiju-agent
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../../../.env     # repo-root .env file with OPENAI_API_KEY
+    volumes:
+      # Persist the vector store across container restarts
+      - ./chroma_db:/app/labs/day2/lab6_production_deploy/chroma_db
+    restart: unless-stopped
