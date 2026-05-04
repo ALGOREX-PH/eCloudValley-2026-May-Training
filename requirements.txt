@@ -1,0 +1,28 @@
+# Agentic AI Training — eCloudValley
+# Python 3.11+
+
+# Core agent framework
+agno>=1.0.0
+
+# Model providers
+openai>=1.50.0
+
+# Vector DB for RAG (Day 2)
+chromadb>=0.5.0
+
+# Document loading for RAG
+pypdf>=4.0.0
+
+# Built-in tools used in labs
+duckduckgo-search>=6.0.0
+
+# Production deployment (Lab 6)
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.0.0
+
+# Env management
+python-dotenv>=1.0.0
+
+# Optional: SQL storage backend for Agno memory
+sqlalchemy>=2.0.0
