@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Day 2 — Agentic AI: RAG + Cloud Integration</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="theme.css">
+</head>
+<body>
+
+<div class="footer-brand">eCloudValley × Agentic AI · Day 2</div>
+
+<div class="reveal">
+<div class="slides">
+
+<!-- ========== TITLE ========== -->
+<section class="title-slide">
+  <h1>Agentic AI Systems</h1>
+  <div class="subtitle">Now feed it your data — and ship it.</div>
+  <div><span class="pill">Day 2 of 2</span><span class="pill">RAG + Cloud Integration</span></div>
+  <div class="speaker">
+    <strong>Danielle Bagaforo Meer</strong><br>
+    eCloudValley Philippines · AWS Office BGC · May 2026
+  </div>
+  <aside class="notes">
+    Welcome back. Quick recap of yesterday, then we go deep on retrieval and ship a real service.
+  </aside>
+</section>
+
+<!-- ========== WELCOME BACK ========== -->
+<section>
+  <section>
+    <h2>Yesterday we built…</h2>
+    <div class="columns-3">
+      <div class="card">
+        <h4 class="accent-cyan">Lab 1</h4>
+        <p>A streaming agent</p>
+      </div>
+      <div class="card">
+        <h4 class="accent-mint">Lab 2</h4>
+        <p>A chatbot with persistent memory</p>
+      </div>
+      <div class="card">
+        <h4 class="accent-amber">Lab 3</h4>
+        <p>A tool-using research agent</p>
+      </div>
+    </div>
+    <p>The agent could look up <em>anything on the public web</em>. Tonight we make it smart about <em>your</em> data.</p>
+  </section>
+
+  <section>
+    <h2>Tonight's arc</h2>
+    <table>
+      <tr><th>Time</th><th>What we do</th></tr>
+      <tr><td>5:00 – 5:10</td><td>Recap &amp; setup check</td></tr>
+      <tr><td>5:10 – 5:55</td><td><strong>Module 4</strong> — RAG fundamentals <span class="pill">Lab 4</span></td></tr>
+      <tr><td>5:55 – 6:05</td><td>☕ Break</td></tr>
+      <tr><td>6:05 – 6:55</td><td><strong>Module 5</strong> — Agentic RAG <span class="pill">Lab 5</span></td></tr>
+      <tr><td>6:55 – 7:05</td><td>☕ Break</td></tr>
+      <tr><td>7:05 – 7:45</td><td><strong>Module 6</strong> — Cloud &amp; data integration <span class="pill">Lab 6</span></td></tr>
+      <tr><td>7:45 – 8:00</td><td>Capstone demos &amp; close</td></tr>
+    </table>
+  </section>
+</section>
+
+<!-- ========== MODULE 4 DIVIDER ========== -->
+<section class="section-divider">
+  <div class="module-num">Module 04 · 45 minutes</div>
+  <h1>RAG Fundamentals</h1>
+  <p class="muted">Retrieval-Augmented Generation: the unglamorous workhorse of useful AI.</p>
+</section>
+
+<!-- ========== MODULE 4 ========== -->
+<section>
+  <section>
+    <h2>Why RAG?</h2>
+    <ul>
+      <li><strong class="accent-pink">Hallucination.</strong> The model makes things up confidently.</li>
+      <li><strong class="accent-amber">Freshness.</strong> Training data has a cutoff. Your data changes daily.</li>
+      <li><strong class="accent-cyan">Privacy.</strong> Your internal docs aren't in any model's training set — and shouldn't be.</li>
+      <li><strong class="accent-mint">Cost.</strong> Smaller context = fewer tokens = cheaper inference.</li>
+    </ul>
+    <blockquote class="success">
+      RAG = "look it up before you answer."
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>The vanilla RAG pipeline</h2>
+    <pre style="font-size:0.7em">
+   ┌──────────────────────────────────┐         ┌──────────────────────────┐
+   │ INDEX (one-time, batch)           │         │ QUERY (every request)     │
+   │                                  │         │                          │
+   │  raw docs                        │         │  user question           │
+   │     ↓ chunk                      │         │     ↓ embed              │
+   │  chunks                          │         │  query vector            │
+   │     ↓ embed                      │         │     ↓ similarity search  │
+   │  vectors → vector DB             │         │  top-k chunks            │
+   │                                  │         │     ↓ stuff into prompt  │
+   │                                  │         │  LLM → answer            │
+   └──────────────────────────────────┘         └──────────────────────────┘
+    </pre>
+  </section>
+
+  <section>
+    <h2>Embeddings, made small</h2>
+    <p>An embedding is a list of numbers that captures the <em>meaning</em> of a piece of text. Closer vectors = closer meanings.</p>
+    <pre><code data-trim class="language-python">
+client.embeddings.create(
+    model="text-embedding-3-small",
+    input="The quick brown fox",
+)
+# → [0.0123, -0.045, 0.78, ..., 0.012]   (1536 numbers)
+    </code></pre>
+    <pre style="font-size:0.7em">
+   "puppy"   ─┐                         ─┐
+              │   ─── close             │  cosine ≈ 0.92
+   "dog"     ─┘                         ─┘
+
+   "puppy"   ─┐                         ─┐
+              │   ─── far               │  cosine ≈ 0.13
+   "tax law" ─┘                         ─┘
+    </pre>
+  </section>
+
+  <section>
+    <h2>Chunking: the unglamorous decision that makes or breaks you</h2>
+    <table>
+      <tr><th>Strategy</th><th>How</th><th>When</th></tr>
+      <tr><td><strong>Fixed-size</strong></td><td>Every N tokens, with overlap</td><td>Default. Simple, works fine.</td></tr>
+      <tr><td><strong>Recursive</strong></td><td>Split on <code>\n\n</code>, then <code>\n</code>, then <code>.</code> until small enough</td><td>Most production systems.</td></tr>
+      <tr><td><strong>Semantic</strong></td><td>Embed sentences, group by similarity</td><td>Long-form docs. Slower to index.</td></tr>
+      <tr><td><strong>Markdown / structural</strong></td><td>Split on headings, keep parents in metadata</td><td>Docs with hierarchy (manuals, handbooks).</td></tr>
+    </table>
+    <blockquote class="warning">
+      <strong>Rule of thumb:</strong> 500–1000 tokens per chunk, 50–100 token overlap. Then iterate based on eval results.
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>Vector DBs — choose your fighter</h2>
+    <table>
+      <tr><th>DB</th><th>Best for</th><th>Today</th></tr>
+      <tr><td><strong>Chroma</strong></td><td>Local dev, single-machine apps</td><td>✅ Lab 4</td></tr>
+      <tr><td><strong>LanceDB</strong></td><td>Embedded production, fast columnar</td><td>—</td></tr>
+      <tr><td><strong>pgvector</strong></td><td>You already run Postgres</td><td>—</td></tr>
+      <tr><td><strong>OpenSearch / Elasticsearch</strong></td><td>Hybrid search at scale, AWS-native</td><td>—</td></tr>
+      <tr><td><strong>Pinecone / Weaviate / Qdrant</strong></td><td>Managed SaaS, fully hosted</td><td>—</td></tr>
+    </table>
+    <p class="muted">Chroma is the right tool for a workshop. In production, your data plane usually picks for you.</p>
+  </section>
+
+  <section>
+    <h2>Retrieval flavors</h2>
+    <div class="columns">
+      <div>
+        <h4 class="accent-cyan">Dense (semantic)</h4>
+        <p>Cosine similarity on embeddings. Good at synonyms, paraphrases.</p>
+        <h4 class="accent-mint">Sparse (BM25 / lexical)</h4>
+        <p>Keyword matching. Good at acronyms, IDs, exact terms.</p>
+      </div>
+      <div>
+        <h4 class="accent-amber">Hybrid</h4>
+        <p>Run both, merge with reciprocal-rank-fusion. Almost always wins in eval.</p>
+        <h4 class="accent-pink">Re-ranking</h4>
+        <p>Retrieve 50, re-rank with a cross-encoder to top 5. Slow but precise.</p>
+      </div>
+    </div>
+    <blockquote>Start dense. Add hybrid when "exact match" queries fail. Add re-ranking last.</blockquote>
+  </section>
+
+  <section>
+    <h2>Agno's <code>Knowledge</code> — RAG without the plumbing</h2>
+    <pre><code data-trim data-line-numbers class="language-python">
+from agno.knowledge import Knowledge
+from agno.vectordb.chroma import ChromaDb
+
+knowledge = Knowledge(
+    vector_db=ChromaDb(
+        collection="cloudkaiju-docs",
+        path="chroma_db",
+    ),
+)
+
+# One-time: ingest a folder of PDFs / MD / text files
+knowledge.add_content(path="docs/")
+
+# Now you can query directly...
+results = knowledge.search("How do I rotate API keys?", num_documents=5)
+for r in results:
+    print(r.content[:200], r.metadata)
+    </code></pre>
+  </section>
+
+  <section class="lab-banner-section">
+    <div class="lab-banner">
+      <span class="lab-tag">Lab 4 · 20 minutes · Instructor-led</span>
+      <h3>Build a Vector DB from PDFs</h3>
+    </div>
+    <h3>Goal</h3>
+    <ul>
+      <li>Ingest 3 sample PDFs into Chroma</li>
+      <li>Inspect the chunks &amp; embeddings</li>
+      <li>Run similarity queries — see what comes back</li>
+      <li>Tweak chunk size and re-index — see what changes</li>
+    </ul>
+    <p class="accent-cyan">→ Open <code>labs/day2/lab4_basic_rag/</code></p>
+    <aside class="notes">
+      Walk through this one with the room. Show the chroma_db/ folder appearing.
+      Show what happens when chunk size is too small (fragmented) and too big (irrelevant).
+    </aside>
+  </section>
+
+  <section>
+    <h2>Module 4 recap</h2>
+    <ul>
+      <li>RAG = retrieve, then generate. Fights hallucination + freshness + privacy.</li>
+      <li>Embeddings turn text into "points in meaning-space"</li>
+      <li>Chunking is the most under-appreciated knob</li>
+      <li>Chroma for dev; Postgres+pgvector or OpenSearch for prod</li>
+    </ul>
+  </section>
+</section>
+
+<!-- ========== BREAK ========== -->
+<section>
+  <h1 class="huge-text accent-cyan" style="text-align:center; margin-top: 2em;">☕ Break</h1>
+  <p style="text-align:center; font-size:1.5em" class="muted">10 minutes.</p>
+  <p style="text-align:center; margin-top:2em">Back at <strong class="accent-mint">6:05</strong>.</p>
+</section>
+
+<!-- ========== MODULE 5 DIVIDER ========== -->
+<section class="section-divider">
+  <div class="module-num">Module 05 · 50 minutes</div>
+  <h1>Agentic RAG</h1>
+  <p class="muted">When the agent decides whether, what, and how to retrieve.</p>
+</section>
+
+<!-- ========== MODULE 5 ========== -->
+<section>
+  <section>
+    <h2>Vanilla RAG vs Agentic RAG</h2>
+    <table>
+      <tr><th></th><th>Vanilla RAG</th><th>Agentic RAG</th></tr>
+      <tr><td>Retrieval</td><td>Always, on every query</td><td>Only when the agent thinks it's needed</td></tr>
+      <tr><td>Query</td><td>The user's raw question</td><td>Rewritten by the agent for better recall</td></tr>
+      <tr><td>Multi-step</td><td>One retrieval per request</td><td>Iterative — retrieve, think, retrieve again</td></tr>
+      <tr><td>Failure mode</td><td>"I don't know" or hallucination</td><td>Agent reflects, tries different angle</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>The "knowledge as a tool" pattern</h2>
+    <pre><code data-trim data-line-numbers class="language-python">
+agent = Agent(
+    model=OpenAIChat(id="gpt-4o-mini"),
+    knowledge=knowledge,
+    search_knowledge=True,   # 👈 the magic flag
+    instructions=[
+        "Use the knowledge base to answer questions about CloudKaiju.",
+        "Always cite source: [filename, page #].",
+        "If the answer isn't in the docs, say so explicitly.",
+    ],
+    show_tool_calls=True,
+)
+    </code></pre>
+    <p>Behind the scenes: <code>search_knowledge=True</code> registers a <code>search_knowledge_base</code> tool. The agent calls it when (and only when) it judges it needed.</p>
+  </section>
+
+  <section>
+    <h2>Query rewriting</h2>
+    <p>Users ask short questions. Vector search wants <em>specific</em> queries. The agent rewrites:</p>
+    <pre><code data-trim class="language-text">
+User:   "what about the keys"
+
+Agent's rewrite:   "API key rotation procedure CloudKaiju"
+
+→ much better hit on the docs
+    </code></pre>
+    <blockquote>Agno does this for you when <code>search_knowledge=True</code>. You can also drive it explicitly with a custom <code>search</code> tool.</blockquote>
+  </section>
+
+  <section>
+    <h2>Multi-step retrieval</h2>
+    <pre style="font-size:0.7em">
+   User:  "Which features were added between v2 and v3?"
+
+   Agent: → search_knowledge("CloudKaiju v2 changelog")
+          ← results: [v2.0, v2.1, v2.2 features]
+   Agent: → search_knowledge("CloudKaiju v3 changelog")
+          ← results: [v3.0, v3.1 features]
+   Agent: I now have both. Compute the diff:
+          → "Added in v3: X, Y, Z. Removed: W. Cited: [...]"
+    </pre>
+    <p class="muted">No code change needed — the agent loops on its own, deciding when to stop.</p>
+  </section>
+
+  <section>
+    <h2>Citations &amp; guardrails</h2>
+    <pre><code data-trim class="language-python">
+agent = Agent(
+    knowledge=knowledge,
+    search_knowledge=True,
+    instructions=[
+        # Citations
+        "Every factual statement must end with [source: filename, p.N].",
+        "If a chunk doesn't cite, search again before answering.",
+
+        # Guardrails
+        "Refuse non-CloudKaiju questions politely.",
+        "Never invent product features. If unsure, say 'I don't see that in the docs.'",
+        "Never reveal customer-specific data unless the user provides their account ID.",
+    ],
+)
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Common failure modes</h2>
+    <table>
+      <tr><th>Symptom</th><th>Fix</th></tr>
+      <tr><td>Wrong / outdated answer</td><td>Re-index. Check the chunk metadata for stale doc.</td></tr>
+      <tr><td>"I don't know" when info is in docs</td><td>Bad chunking, or query needs rewriting. Check what was retrieved.</td></tr>
+      <tr><td>Cites wrong source</td><td>Chunks too big — multiple topics in one chunk. Reduce size.</td></tr>
+      <tr><td>Loops calling search forever</td><td>Set <code>tool_call_limit=5</code>. Add "stop after 3 searches" to instructions.</td></tr>
+      <tr><td>Slow first response</td><td>Re-ranking is expensive. Cache or skip on common queries.</td></tr>
+    </table>
+  </section>
+
+  <section class="lab-banner-section">
+    <div class="lab-banner">
+      <span class="lab-tag">Lab 5 · 30 minutes · Pairs</span>
+      <h3>Agentic Documentation Assistant</h3>
+    </div>
+    <h3>Build</h3>
+    <ul>
+      <li>An agent that answers questions about a real product's docs (we'll use Agno's own)</li>
+      <li>Cites every claim with file + section</li>
+      <li>Refuses anything off-topic ("What's the weather?")</li>
+      <li>Reports "not in docs" when honestly stumped</li>
+    </ul>
+    <p class="accent-cyan">→ Open <code>labs/day2/lab5_agentic_rag/</code></p>
+  </section>
+
+  <section>
+    <h2>Lab 5 debrief</h2>
+    <ul>
+      <li>Whose agent had the cleanest citations? Show it.</li>
+      <li>Whose agent got stumped on something it should have found? Why?</li>
+      <li>What's the failure mode that scares you most for production?</li>
+    </ul>
+    <blockquote class="success">
+      You now have an agent that knows its own data and admits its limits.
+      Time to put it in front of users.
+    </blockquote>
+  </section>
+</section>
+
+<!-- ========== BREAK ========== -->
+<section>
+  <h1 class="huge-text accent-cyan" style="text-align:center; margin-top: 2em;">☕ Break</h1>
+  <p style="text-align:center; font-size:1.5em" class="muted">10 minutes.</p>
+  <p style="text-align:center; margin-top:2em">Back at <strong class="accent-mint">7:05</strong>.</p>
+</section>
+
+<!-- ========== MODULE 6 DIVIDER ========== -->
+<section class="section-divider">
+  <div class="module-num">Module 06 · 40 minutes</div>
+  <h1>Cloud &amp; Data Platform Integration</h1>
+  <p class="muted">From your laptop to a deployable, observable, evaluable service.</p>
+</section>
+
+<!-- ========== MODULE 6 ========== -->
+<section>
+  <section>
+    <h2>The production checklist</h2>
+    <table>
+      <tr><th>Concern</th><th>Question to answer</th></tr>
+      <tr><td>Observability</td><td>Can I see every tool call &amp; token a user generated?</td></tr>
+      <tr><td>Evaluation</td><td>Did this PR make the agent better or worse, measurably?</td></tr>
+      <tr><td>Cost</td><td>What's a P95 conversation cost? Where's the budget kill-switch?</td></tr>
+      <tr><td>Latency</td><td>P95 first-token? P95 final-token? Cold start?</td></tr>
+      <tr><td>Guardrails</td><td>Can the agent leak data, run shell, or call paid APIs unbounded?</td></tr>
+      <tr><td>Failure</td><td>What happens on rate-limit, model 5xx, or vector DB outage?</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Wrap an agent in FastAPI</h2>
+    <pre><code data-trim data-line-numbers class="language-python">
+from fastapi import FastAPI
+from pydantic import BaseModel
+from agno.agent import Agent
+from agno.models.openai import OpenAIChat
+
+app = Agent(
+    model=OpenAIChat(id="gpt-4o-mini"),
+    knowledge=knowledge,
+    search_knowledge=True,
+)
+
+api = FastAPI()
+
+class Ask(BaseModel):
+    question: str
+    session_id: str | None = None
+
+@api.post("/ask")
+def ask(payload: Ask):
+    result = app.run(payload.question, session_id=payload.session_id)
+    return {"answer": result.content, "session_id": result.session_id}
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Containerize</h2>
+    <pre><code data-trim class="language-dockerfile">
+FROM python:3.12-slim
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8000
+CMD ["uvicorn", "main:api", "--host", "0.0.0.0", "--port", "8000"]
+    </code></pre>
+    <pre><code data-trim class="language-yaml">
+# docker-compose.yml
+services:
+  agent:
+    build: .
+    ports: ["8000:8000"]
+    env_file: .env
+    volumes:
+      - ./chroma_db:/app/chroma_db   # persistent vector store
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Deployment paths</h2>
+    <table>
+      <tr><th>Where</th><th>Service</th><th>When it fits</th></tr>
+      <tr><td>AWS</td><td>ECS Fargate</td><td>You already have an AWS shop</td></tr>
+      <tr><td>AWS</td><td>Lambda + Mangum</td><td>Spiky traffic, pay-per-request</td></tr>
+      <tr><td>AWS</td><td>Bedrock Agents</td><td>Want a managed agent runtime</td></tr>
+      <tr><td>GCP</td><td>Cloud Run</td><td>Smallest ops surface for containers</td></tr>
+      <tr><td>Azure</td><td>Container Apps</td><td>Microsoft shop, scale-to-zero</td></tr>
+      <tr><td>Anywhere</td><td>Kubernetes</td><td>Already running k8s, want full control</td></tr>
+    </table>
+    <p class="muted">All of them eat your <code>Dockerfile</code> from the previous slide.</p>
+  </section>
+
+  <section>
+    <h2>Connecting to your data platform</h2>
+    <p>Most enterprise data lives in S3, Snowflake, Postgres, or BigQuery. Expose them as <em>tools</em>.</p>
+    <pre><code data-trim class="language-python">
+@tool
+def query_orders(customer_id: str, days: int = 30) -> list[dict]:
+    """List a customer's orders in the past N days. Use for support questions."""
+    rows = pg.execute(
+        "SELECT * FROM orders WHERE customer_id=%s AND created_at > now() - %s",
+        (customer_id, f"{days} days"),
+    ).fetchall()
+    return [dict(r) for r in rows][:50]   # always cap!
+
+agent = Agent(
+    model=OpenAIChat(id="gpt-4o-mini"),
+    tools=[query_orders, query_invoices, query_tickets],
+    instructions="You are a customer support agent. Use tools to look things up.",
+)
+    </code></pre>
+    <blockquote class="warning">
+      <strong>Cap row counts.</strong> A LIMIT-less SELECT is how agents melt your data warehouse.
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>Observability: see every token</h2>
+    <pre><code data-trim class="language-python">
+# With Phoenix (open-source, self-hosted)
+from phoenix.otel import register
+register(project_name="cloudkaiju-support")
+
+# With Langfuse
+from langfuse.openai import openai      # drop-in replacement
+# All OpenAI calls are now traced.
+    </code></pre>
+    <p>You want answers to:</p>
+    <ul>
+      <li>"Show me every conversation that took &gt;30s last hour"</li>
+      <li>"How many tool calls did the average session make today?"</li>
+      <li>"Which prompts cost the most tokens?"</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Evaluation: do you actually know it works?</h2>
+    <pre><code data-trim class="language-python">
+# A minimal eval set
+EVAL_CASES = [
+    {"q": "How do I rotate API keys?",       "must_cite": "security.md"},
+    {"q": "What's the SLA on Pro tier?",     "must_cite": "pricing.md"},
+    {"q": "What's the weather?",             "must_refuse": True},
+]
+
+def eval_agent(agent, cases):
+    pass_, fail_ = 0, 0
+    for c in cases:
+        result = agent.run(c["q"])
+        ok = (
+            (c.get("must_cite") in result.content if c.get("must_cite") else True)
+            and (("don't" in result.content.lower() or "can't" in result.content.lower())
+                 if c.get("must_refuse") else True)
+        )
+        pass_ += ok; fail_ += not ok
+    return pass_, fail_
+    </code></pre>
+    <blockquote>Run this on every PR. Without it, you're flying blind.</blockquote>
+  </section>
+
+  <section class="lab-banner-section">
+    <div class="lab-banner">
+      <span class="lab-tag">Lab 6 · 20 minutes · Pairs</span>
+      <h3>Ship It: FastAPI + Docker</h3>
+    </div>
+    <h3>Goal</h3>
+    <ul>
+      <li>Wrap your Lab 5 agent in a FastAPI <code>POST /ask</code> endpoint</li>
+      <li>Containerize with the provided <code>Dockerfile</code></li>
+      <li>Run with <code>docker compose up</code></li>
+      <li><code>curl -X POST localhost:8000/ask -d '{"question":"..."}'</code> returns JSON</li>
+    </ul>
+    <p class="accent-cyan">→ Open <code>labs/day2/lab6_production_deploy/</code></p>
+  </section>
+
+  <section>
+    <h2>Module 6 recap</h2>
+    <ul>
+      <li>FastAPI + Docker = portable, container-native deployment</li>
+      <li>Same image runs on ECS, Cloud Run, Container Apps, k8s</li>
+      <li>Data platforms become tools — with row caps</li>
+      <li>Phoenix / Langfuse give you the observability you need</li>
+      <li>Eval suite gates every PR</li>
+    </ul>
+  </section>
+</section>
+
+<!-- ========== CAPSTONE / WRAP ========== -->
+<section>
+  <section>
+    <h2>Capstone — show us what you built</h2>
+    <p>2 or 3 volunteers: <code>curl localhost:8000/ask</code> and walk us through:</p>
+    <ul>
+      <li>What question did your agent answer?</li>
+      <li>What sources did it cite?</li>
+      <li>What broke first when you scaled it up?</li>
+    </ul>
+    <p class="muted">Pizza is here. Eat while we demo.</p>
+  </section>
+
+  <section>
+    <h2>Where to go next</h2>
+    <div class="columns">
+      <div>
+        <h4 class="accent-cyan">This week</h4>
+        <ul>
+          <li>Replace the sample docs with your actual product/team docs</li>
+          <li>Add Phoenix tracing &amp; look at one full trace</li>
+          <li>Push the Docker image to ECR / GHCR</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="accent-mint">This month</h4>
+        <ul>
+          <li>Build a 20-question eval set; run it on every PR</li>
+          <li>Add hybrid search (BM25 + dense)</li>
+          <li>Try a multi-agent setup (router + specialists)</li>
+        </ul>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:1em">Full reading list: <code>handouts/further-reading.md</code></p>
+  </section>
+
+  <section class="title-slide">
+    <h1>You built it.</h1>
+    <p class="muted">Now ship it.</p>
+    <div class="speaker">
+      <strong>Danielle Bagaforo Meer</strong><br>
+      Day 2 · eCloudValley × AWS Office BGC<br>
+      <em>Thank you 🙏</em>
+    </div>
+  </section>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: 'c/t',
+  controls: true,
+  controlsTutorial: true,
+  progress: true,
+  history: true,
+  center: false,
+  transition: 'slide',
+  backgroundTransition: 'fade',
+  plugins: [RevealHighlight, RevealNotes],
+  highlight: { highlightOnLoad: true, escapeHTML: false },
+  width: 1280,
+  height: 720,
+  margin: 0.06,
+});
+</script>
+</body>
+</html>
