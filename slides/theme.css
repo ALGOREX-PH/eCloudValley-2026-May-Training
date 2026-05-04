@@ -1,0 +1,338 @@
+/* eCloudValley Agentic AI Training — custom Reveal.js theme
+ * Dark base with electric accents. Optimized for code-heavy slides at 16:9.
+ */
+
+:root {
+  --bg-base:      #0a0e1a;
+  --bg-elevated:  #131826;
+  --bg-card:      #1a2033;
+  --border:       #2a3149;
+  --text-primary: #e8ecf4;
+  --text-muted:   #9aa3b8;
+  --accent-cyan:  #4ed4ff;
+  --accent-mint:  #5eead4;
+  --accent-pink:  #ff6b9d;
+  --accent-amber: #ffb547;
+  --code-bg:      #0d1117;
+}
+
+.reveal-viewport {
+  background: radial-gradient(ellipse at top, #1b2237 0%, var(--bg-base) 60%);
+}
+
+.reveal {
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 30px;
+  color: var(--text-primary);
+  font-weight: 400;
+}
+
+.reveal .slides section {
+  text-align: left;
+  line-height: 1.45;
+}
+
+/* Headings */
+.reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: var(--text-primary);
+  margin-bottom: 0.4em;
+}
+
+.reveal h1 { font-size: 2.6em; line-height: 1.1; }
+.reveal h2 { font-size: 1.9em; line-height: 1.15; }
+.reveal h3 { font-size: 1.35em; color: var(--accent-cyan); }
+.reveal h4 { font-size: 1.1em; color: var(--accent-mint); }
+
+.reveal .accent-cyan  { color: var(--accent-cyan); }
+.reveal .accent-mint  { color: var(--accent-mint); }
+.reveal .accent-pink  { color: var(--accent-pink); }
+.reveal .accent-amber { color: var(--accent-amber); }
+.reveal .muted        { color: var(--text-muted); }
+
+/* Title slide */
+.reveal .title-slide {
+  text-align: center;
+}
+.reveal .title-slide h1 {
+  font-size: 3.4em;
+  background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-mint) 50%, var(--accent-pink) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 0.2em;
+}
+.reveal .title-slide .subtitle {
+  font-size: 1.2em;
+  color: var(--text-muted);
+  margin-bottom: 1.5em;
+}
+.reveal .title-slide .speaker {
+  font-size: 0.9em;
+  color: var(--text-muted);
+  margin-top: 2em;
+}
+.reveal .title-slide .speaker strong { color: var(--text-primary); font-weight: 600; }
+
+/* Section divider slides */
+.reveal .section-divider {
+  text-align: center;
+}
+.reveal .section-divider .module-num {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  color: var(--accent-cyan);
+  font-size: 1.1em;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-bottom: 0.5em;
+}
+.reveal .section-divider h1 {
+  font-size: 3em;
+  background: linear-gradient(135deg, var(--accent-mint) 0%, var(--accent-cyan) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Lists */
+.reveal ul, .reveal ol { margin-left: 1.2em; }
+.reveal li { margin-bottom: 0.4em; }
+.reveal li::marker { color: var(--accent-cyan); }
+
+/* Inline code */
+.reveal code {
+  font-family: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+  background: var(--code-bg);
+  color: var(--accent-mint);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-size: 0.85em;
+  border: 1px solid var(--border);
+}
+
+/* Code blocks */
+.reveal pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  font-size: 0.55em;
+  margin: 0.5em auto;
+  width: 95%;
+  padding: 0;
+}
+.reveal pre code {
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  padding: 1.2em;
+  display: block;
+  font-size: 1em;
+  line-height: 1.5;
+  border-radius: 10px;
+}
+
+/* Hljs token colors (dark theme tweaks) */
+.hljs-keyword, .hljs-selector-tag { color: var(--accent-pink); font-weight: 600; }
+.hljs-string, .hljs-attr { color: var(--accent-mint); }
+.hljs-number, .hljs-literal { color: var(--accent-amber); }
+.hljs-comment { color: var(--text-muted); font-style: italic; }
+.hljs-function .hljs-title, .hljs-title.function_ { color: var(--accent-cyan); }
+.hljs-built_in { color: var(--accent-cyan); }
+.hljs-class .hljs-title, .hljs-title.class_ { color: var(--accent-amber); }
+.hljs-decorator, .hljs-meta { color: var(--accent-amber); }
+
+/* Tables */
+.reveal table {
+  border-collapse: collapse;
+  margin: 0.6em auto;
+  font-size: 0.75em;
+  width: 95%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.reveal table th {
+  background: var(--bg-elevated);
+  color: var(--accent-cyan);
+  text-align: left;
+  padding: 0.6em 0.8em;
+  border-bottom: 2px solid var(--border);
+  font-weight: 600;
+}
+.reveal table td {
+  padding: 0.5em 0.8em;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.reveal table tr:last-child td { border-bottom: none; }
+
+/* Blockquote / callout */
+.reveal blockquote {
+  background: var(--bg-card);
+  border-left: 4px solid var(--accent-cyan);
+  padding: 0.8em 1.2em;
+  margin: 0.6em 0;
+  border-radius: 0 8px 8px 0;
+  font-style: normal;
+  box-shadow: none;
+  width: 95%;
+}
+.reveal blockquote.warning { border-left-color: var(--accent-amber); }
+.reveal blockquote.danger  { border-left-color: var(--accent-pink); }
+.reveal blockquote.success { border-left-color: var(--accent-mint); }
+
+/* Callout boxes */
+.reveal .callout {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent-cyan);
+  padding: 0.8em 1.2em;
+  border-radius: 0 8px 8px 0;
+  margin: 0.5em 0;
+}
+.reveal .callout-warn  { border-left-color: var(--accent-amber); }
+.reveal .callout-danger { border-left-color: var(--accent-pink); }
+.reveal .callout-good  { border-left-color: var(--accent-mint); }
+
+/* Two-column layout */
+.reveal .columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5em;
+  align-items: start;
+}
+.reveal .columns-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1em;
+}
+
+/* Cards */
+.reveal .card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1em 1.2em;
+}
+
+/* Pill / badge */
+.reveal .pill {
+  display: inline-block;
+  padding: 0.2em 0.7em;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--accent-cyan);
+  font-size: 0.6em;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+  margin-right: 0.4em;
+  vertical-align: middle;
+}
+
+/* Lab announcement banner */
+.reveal .lab-banner {
+  background: linear-gradient(135deg, rgba(78,212,255,0.15) 0%, rgba(94,234,212,0.15) 100%);
+  border: 1px solid var(--accent-cyan);
+  border-radius: 12px;
+  padding: 1em 1.4em;
+  margin: 0.5em 0;
+}
+.reveal .lab-banner .lab-tag {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-cyan);
+  font-size: 0.6em;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.3em;
+}
+.reveal .lab-banner h3 {
+  color: var(--text-primary);
+  margin: 0;
+  font-size: 1.4em;
+}
+
+/* Link */
+.reveal a {
+  color: var(--accent-cyan);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--accent-cyan);
+}
+.reveal a:hover {
+  color: var(--accent-mint);
+  border-bottom-color: var(--accent-mint);
+}
+
+/* Slide number */
+.reveal .slide-number {
+  background: transparent;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6em;
+  right: 20px;
+  bottom: 20px;
+}
+
+/* Progress bar */
+.reveal .progress {
+  color: var(--accent-cyan);
+  height: 4px;
+}
+
+/* Controls */
+.reveal .controls {
+  color: var(--accent-cyan);
+}
+
+/* "Big number" stat block */
+.reveal .stat {
+  display: inline-block;
+  text-align: center;
+  padding: 0.5em 1em;
+}
+.reveal .stat .num {
+  font-size: 2.5em;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-mint) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: block;
+  line-height: 1;
+}
+.reveal .stat .label {
+  color: var(--text-muted);
+  font-size: 0.75em;
+  margin-top: 0.3em;
+}
+
+/* Footer brand */
+.reveal .footer-brand {
+  position: fixed;
+  bottom: 18px;
+  left: 24px;
+  color: var(--text-muted);
+  font-size: 0.55em;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.1em;
+  z-index: 100;
+}
+
+/* Pre/code overflow */
+.reveal pre code.hljs {
+  max-height: 600px;
+  overflow: auto;
+}
+
+/* Speaker notes — only visible in speaker view */
+.reveal .notes-content {
+  display: none;
+}
+
+/* Larger font when needed */
+.reveal .big-text { font-size: 1.4em; }
+.reveal .huge-text { font-size: 1.8em; line-height: 1.1; }
