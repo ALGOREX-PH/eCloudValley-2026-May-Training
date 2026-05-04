@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Day 1 — Agentic AI: Foundations + Chatbots</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="theme.css">
+</head>
+<body>
+
+<div class="footer-brand">eCloudValley × Agentic AI · Day 1</div>
+
+<div class="reveal">
+<div class="slides">
+
+<!-- ========== TITLE ========== -->
+<section class="title-slide">
+  <h1>Agentic AI Systems</h1>
+  <div class="subtitle">From first principles to production-ready agents</div>
+  <div><span class="pill">Day 1 of 2</span><span class="pill">Foundations + Chatbots</span></div>
+  <div class="speaker">
+    <strong>Danielle Bagaforo Meer</strong><br>
+    eCloudValley Philippines · AWS Office BGC · May 2026
+  </div>
+  <aside class="notes">
+    Welcome everyone. This is Day 1 of 2. Tonight is about laying the foundation —
+    by the end of this session you'll have a tool-using agent running on your laptop.
+    Tomorrow we feed it your own data and ship it.
+  </aside>
+</section>
+
+<!-- ========== WELCOME ========== -->
+<section>
+  <section>
+    <h2>Hi, I'm Danielle.</h2>
+    <div class="columns">
+      <div>
+        <ul>
+          <li>I build & ship agentic systems for a living</li>
+          <li>I've shipped to AWS, GCP, on-prem — they all bite differently</li>
+          <li>Tonight I'll show you the smallest amount of code that does the most</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>How tonight works</h4>
+        <ul>
+          <li>~30% slides, ~70% you typing</li>
+          <li>2 short breaks (10 min each)</li>
+          <li>Interrupt me — questions are the lab</li>
+        </ul>
+      </div>
+    </div>
+    <aside class="notes">
+      Quick speaker intro. Emphasize this is a workshop, not a lecture.
+      Set the expectation that they'll be coding most of the time.
+    </aside>
+  </section>
+
+  <section>
+    <h2>Tonight's arc</h2>
+    <table>
+      <tr><th>Time</th><th>What we do</th></tr>
+      <tr><td>5:00 – 5:15</td><td>Setup check + intros</td></tr>
+      <tr><td>5:15 – 5:50</td><td><strong>Module 1</strong> — Fundamentals of Agentic AI</td></tr>
+      <tr><td>5:50 – 6:00</td><td>☕ Break</td></tr>
+      <tr><td>6:00 – 6:45</td><td><strong>Module 2</strong> — Building Chatbots <span class="pill">Lab 1</span><span class="pill">Lab 2</span></td></tr>
+      <tr><td>6:45 – 6:55</td><td>☕ Break</td></tr>
+      <tr><td>6:55 – 7:50</td><td><strong>Module 3</strong> — Tools & Reasoning <span class="pill">Lab 3</span></td></tr>
+      <tr><td>7:50 – 8:00</td><td>Wrap & Day 2 teaser</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Setup check — 60 seconds</h2>
+    <pre><code data-trim data-noescape class="language-bash">
+# In your activated venv:
+python -c "import agno, openai; print('ready')"
+
+# And your key is set:
+python -c "import os; print('key:', os.environ.get('OPENAI_API_KEY','NOT SET')[:7]+'...')"
+    </code></pre>
+    <blockquote class="warning">
+      🖐️ Hand up if either command failed. We fix it now, not at 6 PM.
+    </blockquote>
+    <aside class="notes">
+      Wait until everyone reports green. This investment pays off — fixing setup mid-lab is brutal.
+    </aside>
+  </section>
+</section>
+
+<!-- ========== MODULE 1 DIVIDER ========== -->
+<section class="section-divider">
+  <div class="module-num">Module 01 · 35 minutes</div>
+  <h1>Fundamentals of Agentic AI</h1>
+  <p class="muted">What's an agent, really? When should you build one — and when shouldn't you?</p>
+</section>
+
+<!-- ========== MODULE 1 ========== -->
+<section>
+  <section>
+    <h2>The least controversial definition</h2>
+    <blockquote class="success">
+      An <strong>agent</strong> is an LLM in a loop, deciding what to do next based on what it sees.
+    </blockquote>
+    <p class="muted">That's it. The rest is engineering.</p>
+    <aside class="notes">
+      This definition is from Anthropic's "Building Effective Agents" — it's the cleanest one out there.
+      Resist the urge to over-define. The complexity is in the engineering, not the concept.
+    </aside>
+  </section>
+
+  <section>
+    <h2>LLM call vs Chatbot vs Agent</h2>
+    <div class="columns-3">
+      <div class="card">
+        <h4>LLM call</h4>
+        <p class="muted" style="font-size:0.8em">Stateless. One in, one out.</p>
+        <pre><code data-trim class="language-python">
+client.responses.create(
+  model="gpt-4o",
+  input="Hi"
+)
+        </code></pre>
+      </div>
+      <div class="card">
+        <h4>Chatbot</h4>
+        <p class="muted" style="font-size:0.8em">Stateful conversation.<br>No outside actions.</p>
+        <pre><code data-trim class="language-python">
+agent.run("Hi")
+agent.run("What did I just say?")
+# remembers
+        </code></pre>
+      </div>
+      <div class="card">
+        <h4>Agent</h4>
+        <p class="muted" style="font-size:0.8em">Picks tools.<br>Loops.<br>Acts on the world.</p>
+        <pre><code data-trim class="language-python">
+agent = Agent(
+  tools=[search, calc],
+  ...)
+agent.run("Find &amp; sum X")
+        </code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The four properties of an agent</h2>
+    <div class="columns">
+      <div>
+        <h4 class="accent-cyan">1. Autonomy</h4>
+        <p>Decides its own next step.</p>
+        <h4 class="accent-mint">2. Tools</h4>
+        <p>Can act on the world (search, query, write).</p>
+      </div>
+      <div>
+        <h4 class="accent-pink">3. Memory</h4>
+        <p>Recalls earlier turns &amp; persistent facts.</p>
+        <h4 class="accent-amber">4. Reasoning</h4>
+        <p>Plans, reflects, recovers from errors.</p>
+      </div>
+    </div>
+    <aside class="notes">
+      An agentic system has all four to some degree. Workflows have only the first two
+      and often a fixed sequence. The line is fuzzy on purpose.
+    </aside>
+  </section>
+
+  <section>
+    <h2>The spectrum: workflow → agent</h2>
+    <pre style="font-size:0.65em; padding: 1em; background: var(--bg-card); border-radius: 10px;">
+        Fixed pipeline                                     Open-ended loop
+        ─────────────────────────────────────────────────────────────
+        Script  →  RAG  →  Workflow  →  Agentic RAG  →  Multi-Agent
+        ─────────────────────────────────────────────────────────────
+        Predictable, cheap                          Powerful, expensive
+        Easy to test                                Hard to test
+    </pre>
+    <blockquote class="warning">
+      Pick the leftmost option that solves your problem. Don't lead with "agent."
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>Pattern: ReAct (Reason + Act)</h2>
+    <pre style="font-size:0.7em">
+   ┌───────────────────────────────────────┐
+   │  Thought:  I need to know X.          │
+   │  Action:   search("X")                │
+   │  Observ:   "X is ..."                 │
+   │  Thought:  Now I can compute Y.       │
+   │  Action:   calculator(...)            │
+   │  Observ:   42                         │
+   │  Thought:  I have the answer.         │
+   │  Final:    "Y is 42"                  │
+   └───────────────────────────────────────┘
+    </pre>
+    <p class="muted">Yao et al., 2022 — every modern agent uses some flavor of this.</p>
+  </section>
+
+  <section>
+    <h2>Other patterns worth knowing</h2>
+    <table>
+      <tr><th>Pattern</th><th>When</th><th>Trade-off</th></tr>
+      <tr><td><strong>Plan-and-Execute</strong></td><td>Multi-step task with predictable structure</td><td>Better planning, more rigid</td></tr>
+      <tr><td><strong>Reflexion</strong></td><td>Agent should self-correct after failure</td><td>Higher quality, more tokens</td></tr>
+      <tr><td><strong>Multi-agent</strong></td><td>Distinct roles or parallel work</td><td>Powerful, very hard to debug</td></tr>
+      <tr><td><strong>Routing</strong></td><td>Many specialists, one entry</td><td>Clean separation, slight latency</td></tr>
+    </table>
+    <aside class="notes">
+      Don't get attached to pattern names. Pick what's needed for the problem.
+      We'll do ReAct in Lab 3 — it's the workhorse.
+    </aside>
+  </section>
+
+  <section>
+    <h2>When NOT to use an agent</h2>
+    <div class="columns">
+      <div>
+        <h4 class="accent-pink">Don't</h4>
+        <ul>
+          <li>The flow is deterministic → use a workflow</li>
+          <li>You need millisecond latency</li>
+          <li>One LLM call already works</li>
+          <li>The task is safety-critical &amp; can't tolerate hallucination</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="accent-mint">Do</h4>
+        <ul>
+          <li>The path branches based on intermediate results</li>
+          <li>You need to call out to tools to find the answer</li>
+          <li>The user's intent is open-ended</li>
+          <li>You want the system to recover from its own errors</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Why Agno?</h2>
+    <div class="columns">
+      <div>
+        <ul>
+          <li><span class="accent-cyan">Pythonic</span> — agents are just classes</li>
+          <li><span class="accent-mint">Multi-provider</span> — OpenAI, Anthropic, Bedrock, Gemini</li>
+          <li><span class="accent-amber">Batteries included</span> — memory, RAG, tools, evals</li>
+          <li><span class="accent-pink">~10× faster</span> agent instantiation than LangChain</li>
+        </ul>
+      </div>
+      <div class="card">
+        <pre><code data-trim class="language-python">
+from agno.agent import Agent
+from agno.models.openai import OpenAIChat
+
+agent = Agent(
+    model=OpenAIChat(id="gpt-4o-mini"),
+    instructions="You are helpful.",
+    markdown=True,
+)
+agent.print_response("Hi!", stream=True)
+        </code></pre>
+      </div>
+    </div>
+    <aside class="notes">
+      I'm not selling Agno — there are great alternatives (LangGraph, OpenAI Agents SDK, Pydantic AI).
+      I picked Agno because it's the smallest amount of API surface to learn for the most ground covered.
+    </aside>
+  </section>
+
+  <section>
+    <h2>Module 1 recap</h2>
+    <ul>
+      <li>An agent = LLM in a loop deciding what to do next</li>
+      <li>Four properties: autonomy, tools, memory, reasoning</li>
+      <li>ReAct is the foundational pattern</li>
+      <li><strong>Don't reach for an agent first</strong> — earn it</li>
+    </ul>
+    <blockquote class="success">
+      Next: let's actually build one.
+    </blockquote>
+  </section>
+</section>
+
+<!-- ========== MODULE 2 DIVIDER ========== -->
+<section class="section-divider">
+  <div class="module-num">Module 02 · 45 minutes</div>
+  <h1>Building AI-Powered Chatbots</h1>
+  <p class="muted">From a one-shot LLM call to a chatbot with persistent memory.</p>
+</section>
+
+<!-- ========== MODULE 2 ========== -->
+<section>
+  <section>
+    <h2>What is a chat completion, really?</h2>
+    <pre><code data-trim data-line-numbers class="language-python">
+messages = [
+    {"role": "system",    "content": "You are a polite assistant."},
+    {"role": "user",      "content": "Hi, my name is Danielle."},
+    {"role": "assistant", "content": "Nice to meet you, Danielle!"},
+    {"role": "user",      "content": "What's my name?"},
+]
+
+# The model sees the WHOLE list every call. There's no server-side memory.
+response = client.responses.create(model="gpt-4o-mini", input=messages)
+    </code></pre>
+    <p class="muted">"Memory" in chatbots = sending the history back every time.</p>
+  </section>
+
+  <section>
+    <h2>Knobs that matter</h2>
+    <table>
+      <tr><th>Knob</th><th>What it does</th><th>Default</th></tr>
+      <tr><td><code>temperature</code></td><td>Randomness. 0 = deterministic, 2 = wild</td><td>1.0</td></tr>
+      <tr><td><code>max_tokens</code></td><td>Hard cap on the response length</td><td>~4096</td></tr>
+      <tr><td><code>system</code></td><td>Persistent persona / rules</td><td>—</td></tr>
+      <tr><td><code>stream=True</code></td><td>Token-by-token output</td><td>False</td></tr>
+      <tr><td><code>tools</code></td><td>Functions the model may call</td><td>—</td></tr>
+    </table>
+    <blockquote>
+      For agents: <code>temperature=0</code> for tool selection, ≥0.7 for creative output.
+    </blockquote>
+  </section>
+
+  <section class="lab-banner-section">
+    <div class="lab-banner">
+      <span class="lab-tag">Lab 1 · 10 minutes · Instructor-led</span>
+      <h3>Your First Agno Agent</h3>
+    </div>
+    <h3>Goal</h3>
+    <p>Run a streaming agent on your laptop. Prove your env works end-to-end.</p>
+    <h3>You'll learn</h3>
+    <ul>
+      <li><code>Agent</code>, <code>OpenAIChat</code>, <code>instructions</code>, <code>markdown</code></li>
+      <li><code>print_response()</code> vs <code>run()</code></li>
+      <li>What streaming looks like in the terminal</li>
+    </ul>
+    <p class="accent-cyan">→ Open <code>labs/day1/lab1_first_agent/</code></p>
+  </section>
+
+  <section>
+    <h2>Lab 1 — the whole thing</h2>
+    <pre><code data-trim data-line-numbers class="language-python">
+from agno.agent import Agent
+from agno.models.openai import OpenAIChat
+from dotenv import load_dotenv
+
+load_dotenv()
+
+agent = Agent(
+    model=OpenAIChat(id="gpt-4o-mini"),
+    instructions=[
+        "You are a friendly Filipino tech mentor.",
+        "Be concise. Use code examples when helpful.",
+    ],
+    markdown=True,
+)
+
+agent.print_response(
+    "Explain agentic AI to a junior engineer in 3 sentences.",
+    stream=True,
+)
+    </code></pre>
+    <aside class="notes">
+      Walk through line by line. Show the streaming. Show what changes when you remove `stream=True`.
+      Show what changes when `instructions` is swapped.
+    </aside>
+  </section>
+
+  <section>
+    <h2>The chatbot problem</h2>
+    <pre><code data-trim class="language-python">
+agent.run("Hi, I'm Danielle.")
+agent.run("What's my name?")
+# → "I don't know, you didn't tell me."  😩
+    </code></pre>
+    <blockquote class="warning">
+      Each <code>run()</code> is a fresh API call. The agent has no memory unless we give it some.
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>Three flavors of memory</h2>
+    <table>
+      <tr><th>Type</th><th>What it stores</th><th>Lifetime</th></tr>
+      <tr><td><strong>Conversation history</strong></td><td>Recent turns</td><td>Single session</td></tr>
+      <tr><td><strong>Session storage</strong></td><td>The full chat log</td><td>Across processes (DB)</td></tr>
+      <tr><td><strong>User memory</strong></td><td>Distilled facts about the user</td><td>Forever</td></tr>
+    </table>
+    <p class="muted">Today we cover the first two. User memory is a Day 2 stretch goal.</p>
+  </section>
+
+  <section>
+    <h2>Adding history</h2>
+    <pre><code data-trim data-line-numbers="3-5" class="language-python">
+agent = Agent(
+    model=OpenAIChat(id="gpt-4o-mini"),
+    add_history_to_messages=True,   # 👈 include past turns
+    num_history_runs=10,             # 👈 how many to include
+    instructions="You are a friendly assistant.",
+)
+
+agent.run("Hi, I'm Danielle.")
+agent.run("What's my name?")
+# → "Your name is Danielle." ✅
+    </code></pre>
+    <p class="muted">The conversation is held in memory <em>only while the process runs</em>. Restart, lose it.</p>
+  </section>
+
+  <section>
+    <h2>Persistent memory with SqliteStorage</h2>
+    <pre><code data-trim data-line-numbers="2,5-8,11-12" class="language-python">
+from agno.agent import Agent
+from agno.storage.sqlite import SqliteStorage
+from agno.models.openai import OpenAIChat
+
+storage = SqliteStorage(
+    table_name="chat_sessions",
+    db_file="agent_storage/chat.db",
+)
+
+agent = Agent(
+    model=OpenAIChat(id="gpt-4o-mini"),
+    storage=storage,
+    session_id="user-42",       # same id = same chat
+    add_history_to_messages=True,
+)
+    </code></pre>
+    <p>Now restart the process. Same <code>session_id</code> → it picks up where it left off.</p>
+  </section>
+
+  <section class="lab-banner-section">
+    <div class="lab-banner">
+      <span class="lab-tag">Lab 2 · 20 minutes · Pairs</span>
+      <h3>Customer Support Chatbot with Memory</h3>
+    </div>
+    <h3>Build</h3>
+    <p>A chatbot for a fictional SaaS ("CloudKaiju") that:</p>
+    <ul>
+      <li>Has a defined persona (helpful, slightly cheeky, escalates politely)</li>
+      <li>Remembers the user's name and last issue across runs</li>
+      <li>Persists to SQLite so a process restart doesn't lose context</li>
+    </ul>
+    <p class="accent-cyan">→ Open <code>labs/day1/lab2_chatbot_with_memory/</code></p>
+    <aside class="notes">
+      Walk around while pairs work. Common bug: not setting session_id, so each run is a new session.
+    </aside>
+  </section>
+
+  <section>
+    <h2>Module 2 recap</h2>
+    <ul>
+      <li>"Memory" = sending past turns back into the model</li>
+      <li>Agno's <code>add_history_to_messages</code> handles in-session memory</li>
+      <li><code>SqliteStorage</code> + <code>session_id</code> handles persistence</li>
+      <li>Personas live in <code>instructions</code>, kept short and specific</li>
+    </ul>
+  </section>
+</section>
+
+<!-- ========== BREAK ========== -->
+<section>
+  <h1 class="huge-text accent-cyan" style="text-align:center; margin-top: 2em;">☕ Break</h1>
+  <p style="text-align:center; font-size:1.5em" class="muted">10 minutes. Stretch, refill, restroom.</p>
+  <p style="text-align:center; margin-top:2em">Back at <strong class="accent-mint">6:55</strong>.</p>
+</section>
+
+<!-- ========== MODULE 3 DIVIDER ========== -->
+<section class="section-divider">
+  <div class="module-num">Module 03 · 55 minutes</div>
+  <h1>Tools &amp; Reasoning</h1>
+  <p class="muted">Where chatbots become agents.</p>
+</section>
+
+<!-- ========== MODULE 3 ========== -->
+<section>
+  <section>
+    <h2>What is a "tool"?</h2>
+    <blockquote class="success">
+      A <strong>tool</strong> is a Python function the LLM is allowed to call. The model decides <em>when</em>, <em>which</em>, and <em>with what arguments</em>.
+    </blockquote>
+    <p>Under the hood: the function's signature + docstring is sent to the model as a JSON schema. The model returns a structured "call this with these args" response. The framework runs the function and feeds the result back.</p>
+  </section>
+
+  <section>
+    <h2>The function-calling loop</h2>
+    <pre style="font-size:0.7em">
+   You: "What's the weather in Manila and Tokyo? Sum the temps."
+
+       ↓
+
+   Agent: I should call get_weather twice and add.
+   → tool_call: get_weather("Manila")
+   ← result: 31°C
+   → tool_call: get_weather("Tokyo")
+   ← result: 18°C
+   → tool_call: calculator("31 + 18")
+   ← result: 49
+   ← Final: "49°C combined."
+    </pre>
+    <p class="muted">This is ReAct, executed for you by Agno.</p>
+  </section>
+
+  <section>
+    <h2>Built-in toolkits in Agno</h2>
+    <table>
+      <tr><th>Toolkit</th><th>Use for</th></tr>
+      <tr><td><code>DuckDuckGoTools</code></td><td>Web search (no API key needed)</td></tr>
+      <tr><td><code>CalculatorTools</code></td><td>Math without LLM hallucination</td></tr>
+      <tr><td><code>YFinanceTools</code></td><td>Stock prices, financials</td></tr>
+      <tr><td><code>WikipediaTools</code></td><td>Encyclopedia lookups</td></tr>
+      <tr><td><code>ShellTools</code></td><td>Run shell commands (be careful!)</td></tr>
+      <tr><td><code>FileTools</code></td><td>Read/write the local filesystem</td></tr>
+      <tr><td><code>PythonTools</code></td><td>Execute Python code in a sandbox</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Using a built-in tool</h2>
+    <pre><code data-trim data-line-numbers class="language-python">
+from agno.agent import Agent
+from agno.models.openai import OpenAIChat
+from agno.tools.duckduckgo import DuckDuckGoTools
+
+agent = Agent(
+    model=OpenAIChat(id="gpt-4o-mini"),
+    tools=[DuckDuckGoTools()],
+    instructions="Always cite the URL of any source you use.",
+    show_tool_calls=True,   # 👈 see what's happening
+    markdown=True,
+)
+
+agent.print_response(
+    "What was the latest news about AI in the Philippines?",
+    stream=True,
+)
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Writing a custom tool</h2>
+    <pre><code data-trim data-line-numbers class="language-python">
+from agno.tools import tool
+from pathlib import Path
+
+@tool
+def save_note(filename: str, content: str) -> str:
+    """Save a markdown note to disk in the notes/ folder.
+
+    Args:
+        filename: A short slug, no spaces or extension. e.g. "ai-news-jul"
+        content: The full markdown content of the note.
+
+    Returns:
+        The absolute path of the file that was written.
+    """
+    notes_dir = Path("notes")
+    notes_dir.mkdir(exist_ok=True)
+    path = notes_dir / f"{filename}.md"
+    path.write_text(content, encoding="utf-8")
+    return str(path.resolve())
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>What the LLM actually sees</h2>
+    <pre><code data-trim class="language-json">
+{
+  "name": "save_note",
+  "description": "Save a markdown note to disk in the notes/ folder.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "filename": {
+        "type": "string",
+        "description": "A short slug, no spaces or extension. e.g. 'ai-news-jul'"
+      },
+      "content": {
+        "type": "string",
+        "description": "The full markdown content of the note."
+      }
+    },
+    "required": ["filename", "content"]
+  }
+}
+    </code></pre>
+    <blockquote class="warning">
+      The docstring IS the API contract. Vague docstrings = vague tool use.
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>Three rules for great tools</h2>
+    <ol>
+      <li><strong class="accent-cyan">Verbs in the name.</strong> <code>get_user</code>, not <code>user</code>.</li>
+      <li><strong class="accent-mint">Tight types.</strong> Use <code>str</code>, <code>int</code>, <code>list[str]</code>, Pydantic models — not <code>dict</code> or <code>Any</code>.</li>
+      <li><strong class="accent-amber">Docstring with examples.</strong> Tell the model when to use it AND when not to.</li>
+    </ol>
+    <pre><code data-trim class="language-python">
+@tool
+def lookup_invoice(invoice_id: str) -> dict:
+    """Fetch an invoice by ID.
+
+    Use this when the user asks about a specific invoice.
+    Don't use this for monthly summaries — use list_invoices(month) instead.
+
+    Args:
+        invoice_id: e.g. "INV-2026-00042"
+    """
+    ...
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Watching ReAct in action</h2>
+    <pre style="font-size:0.6em"><code data-trim class="language-bash">
+$ python lab3.py "Latest agentic AI papers, save a brief"
+
+╭─ Tool calls ─────────────────────────╮
+│  duckduckgo_search                   │
+│  query: "latest agentic AI papers 2026" │
+╰──────────────────────────────────────╯
+╭─ Tool result ────────────────────────╮
+│  [{"title": "Toolformer revisited"...│
+╰──────────────────────────────────────╯
+╭─ Tool calls ─────────────────────────╮
+│  save_note                           │
+│  filename: "agentic-ai-papers-may"   │
+│  content: "# Agentic AI ..."         │
+╰──────────────────────────────────────╯
+
+✓ notes/agentic-ai-papers-may.md
+    </code></pre>
+    <p class="muted"><code>show_tool_calls=True</code> turns this on. Always on during dev.</p>
+  </section>
+
+  <section>
+    <h2>Common pitfalls</h2>
+    <table>
+      <tr><th>Symptom</th><th>Likely cause</th></tr>
+      <tr><td>Tool never called</td><td>Vague docstring; model doesn't know when to use it</td></tr>
+      <tr><td>Hallucinated args (wrong invoice ID)</td><td>No examples in docstring; types too loose</td></tr>
+      <tr><td>Infinite loop of tool calls</td><td>Tool returns nothing useful; agent retries forever — set <code>tool_call_limit</code></td></tr>
+      <tr><td>Slow responses</td><td>Tools called serially. Use parallel tool calls when independent.</td></tr>
+      <tr><td>Token blowup</td><td>Tool returns huge JSON; summarize before returning</td></tr>
+    </table>
+  </section>
+
+  <section class="lab-banner-section">
+    <div class="lab-banner">
+      <span class="lab-tag">Lab 3 · 30 minutes · Pairs</span>
+      <h3>Personal Research Assistant</h3>
+    </div>
+    <h3>Build an agent that:</h3>
+    <ul>
+      <li>Takes a topic from the command line</li>
+      <li>Searches the web using <code>DuckDuckGoTools</code></li>
+      <li>Synthesizes findings into a structured markdown brief</li>
+      <li>Saves it via your custom <code>save_note</code> tool</li>
+      <li>Cites every source URL</li>
+    </ul>
+    <p class="accent-cyan">→ Open <code>labs/day1/lab3_tool_using_agent/</code></p>
+    <aside class="notes">
+      This is the capstone of Day 1. If they get this working, they've built a real agent.
+      Walk around. Pairs that finish early: ask them to add a second custom tool.
+    </aside>
+  </section>
+
+  <section>
+    <h2>Lab 3 debrief</h2>
+    <ul>
+      <li>Whose agent searched the cleanest queries? Show the trace.</li>
+      <li>Whose agent went off the rails? Show that trace too — it's instructive.</li>
+      <li>What would you add next?</li>
+    </ul>
+    <blockquote class="success">
+      You just built — from scratch — a multi-step, tool-using agent.
+      That's the foundation for everything in Day 2.
+    </blockquote>
+  </section>
+</section>
+
+<!-- ========== WRAP ========== -->
+<section>
+  <section>
+    <h2>What we built tonight</h2>
+    <div class="columns-3">
+      <div class="card">
+        <h4 class="accent-cyan">Lab 1</h4>
+        <p>Streaming Agno agent with custom instructions</p>
+      </div>
+      <div class="card">
+        <h4 class="accent-mint">Lab 2</h4>
+        <p>Stateful chatbot with persistent SQLite memory</p>
+      </div>
+      <div class="card">
+        <h4 class="accent-amber">Lab 3</h4>
+        <p>Tool-using research agent with custom + built-in tools</p>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:1em">Three labs, three working agents, on your machine.</p>
+  </section>
+
+  <section>
+    <h2>Tomorrow: feed it your data</h2>
+    <ul>
+      <li><strong>Module 4</strong> — RAG fundamentals (embeddings, chunking, vector DBs)</li>
+      <li><strong>Module 5</strong> — Agentic RAG (your agent retrieves &amp; cites)</li>
+      <li><strong>Module 6</strong> — Wrap it as a FastAPI service in Docker, ready to deploy</li>
+    </ul>
+    <blockquote class="warning">
+      Homework: keep your <code>.env</code> &amp; venv intact. Bring laptops charged.
+    </blockquote>
+  </section>
+
+  <section class="title-slide">
+    <h1>Questions?</h1>
+    <p class="muted">See you tomorrow at 5 PM.</p>
+    <div class="speaker">
+      <strong>Danielle Bagaforo Meer</strong><br>
+      Day 1 · eCloudValley × AWS Office BGC
+    </div>
+  </section>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: 'c/t',
+  controls: true,
+  controlsTutorial: true,
+  progress: true,
+  history: true,
+  center: false,
+  transition: 'slide',
+  backgroundTransition: 'fade',
+  plugins: [RevealHighlight, RevealNotes],
+  highlight: { highlightOnLoad: true, escapeHTML: false },
+  width: 1280,
+  height: 720,
+  margin: 0.06,
+});
+</script>
+</body>
+</html>
