@@ -1,0 +1,39 @@
+# Secrets
+.env
+*.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Vector DB / agent storage created at runtime
+chroma_db/
+**/chroma_db/
+*.sqlite
+*.sqlite3
+*.db
+agent_storage/
+**/agent_storage/
+
+# Lab outputs
+notes/
+**/notes/
+tmp/
+**/tmp/
+
+# IDEs / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Docker
+*.log
