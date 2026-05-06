@@ -322,37 +322,35 @@
   z-index: 100;
 }
 
-/* Brand lockup — single white card holding both logos */
+/* Brand lockup — bare logos, no card */
 .reveal .brand-lockup {
   display: inline-flex;
   align-items: center;
-  gap: 28px;
-  background: #ffffff;
-  padding: 18px 32px;
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+  gap: 36px;
   margin: 0 auto 1.6em;
 }
 .reveal .brand-lockup img {
-  height: 54px;
+  height: 64px;
   width: auto;
   display: block;
 }
+.reveal .brand-lockup .logo-algorex {
+  filter: brightness(0) invert(1);
+}
 .reveal .brand-lockup .divider {
   width: 1px;
-  height: 44px;
-  background: #d1d5db;
+  height: 48px;
+  background: var(--border);
   display: block;
 }
 
 /* Compact lockup for closing slides */
 .reveal .brand-lockup.compact {
-  padding: 12px 22px;
-  gap: 20px;
+  gap: 26px;
   margin-top: 1.4em;
 }
-.reveal .brand-lockup.compact img { height: 38px; }
-.reveal .brand-lockup.compact .divider { height: 32px; }
+.reveal .brand-lockup.compact img { height: 44px; }
+.reveal .brand-lockup.compact .divider { height: 34px; }
 
 /* Tighten the title slide so everything fits */
 .reveal .title-slide h1 { font-size: 2.9em; margin-top: 0.1em; }
