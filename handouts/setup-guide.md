@@ -51,17 +51,7 @@ Verify: `git --version`
 
 ---
 
-## 3. Install Docker Desktop *(only needed for Lab 6 on Day 2)*
-
-You can skip this for Day 1 and install it during Day 2 break #1 if you prefer.
-
-- <https://www.docker.com/products/docker-desktop/>
-
-Verify: `docker --version`
-
----
-
-## 4. Clone the training repo
+## 3. Clone the training repo
 
 Pick a folder you can find again:
 
