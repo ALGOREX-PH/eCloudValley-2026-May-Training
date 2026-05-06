@@ -69,7 +69,7 @@ cd eCloudValley-Training
 
 ---
 
-## 5. Create a virtual environment & install dependencies
+## 4. Create a virtual environment & install dependencies
 
 ```bash
 # Windows (PowerShell)
