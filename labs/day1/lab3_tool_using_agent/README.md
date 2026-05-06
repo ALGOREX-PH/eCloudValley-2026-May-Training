@@ -11,7 +11,7 @@ Build an agent that takes a research topic from the command line, searches the w
 
 - Built-in toolkit: `DuckDuckGoTools`
 - Writing your own tool with the `@tool` decorator
-- The ReAct trace via `show_tool_calls=True`
+- The ReAct trace shown live via `print_response(stream=True)`
 - Multi-step reasoning over multiple tool calls
 - Why docstrings ARE the API for LLMs
 

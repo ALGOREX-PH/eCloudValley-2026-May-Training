@@ -39,7 +39,6 @@ load_dotenv()
 # TODO 2 — Build the agent.
 #   - model: OpenAIChat(id="gpt-4o-mini")
 #   - tools: [DuckDuckGoTools(), save_note]
-#   - show_tool_calls: True
 #   - markdown: True
 #   - instructions should:
 #       (a) define the agent's role (research assistant)

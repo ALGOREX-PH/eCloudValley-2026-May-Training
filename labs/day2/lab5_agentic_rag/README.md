@@ -54,5 +54,5 @@ You'll get an interactive prompt. Try these:
 ## Tips
 
 - The first time it runs, it ingests the docs (~5 sec). Subsequent runs reuse the index.
-- If it ever hallucinates a fact, look at `show_tool_calls=True` output — did it actually search? Did the search return relevant chunks?
+- If it ever hallucinates a fact, watch the streamed tool-call output — did it actually search? Did the search return relevant chunks?
 - The instructions string is doing 80% of the work here. Iterate on it.

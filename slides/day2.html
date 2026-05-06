@@ -384,7 +384,6 @@ agent = Agent(
         "Always cite source: [filename, page #].",
         "If the answer isn't in the docs, say so explicitly.",
     ],
-    show_tool_calls=True,
 )
     </code></pre>
     <p>Behind the scenes: <code>search_knowledge=True</code> registers a <code>search_knowledge_base</code> tool. The agent calls it when (and only when) it judges it needed.</p>

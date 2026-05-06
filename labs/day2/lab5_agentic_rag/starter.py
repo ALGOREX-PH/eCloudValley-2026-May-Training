@@ -38,7 +38,6 @@ def build_agent(knowledge: Knowledge) -> Agent:
       - model: OpenAIChat(id="gpt-4o-mini")
       - knowledge: the knowledge object passed in
       - search_knowledge: True   (this is the agentic switch)
-      - show_tool_calls: True    (so we can SEE the agent reasoning)
       - markdown: True
       - instructions: a list that ENFORCES:
           1. Role: a CloudKaiju documentation assistant

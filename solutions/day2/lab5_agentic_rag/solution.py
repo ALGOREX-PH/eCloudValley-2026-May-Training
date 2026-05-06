@@ -33,7 +33,6 @@ def build_agent(knowledge: Knowledge) -> Agent:
         model=OpenAIChat(id="gpt-4o-mini"),
         knowledge=knowledge,
         search_knowledge=True,
-        show_tool_calls=True,
         markdown=True,
         tool_call_limit=6,
         instructions=[

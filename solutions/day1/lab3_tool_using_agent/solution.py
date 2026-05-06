@@ -59,7 +59,6 @@ def build_agent() -> Agent:
     return Agent(
         model=OpenAIChat(id="gpt-4o-mini"),
         tools=[DuckDuckGoTools(), save_note],
-        show_tool_calls=True,
         markdown=True,
         tool_call_limit=8,
         instructions=[

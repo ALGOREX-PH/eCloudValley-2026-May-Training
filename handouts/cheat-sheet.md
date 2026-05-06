@@ -34,8 +34,8 @@ agent.print_response("Hello, world!", stream=True)
 | `num_history_runs=5` | How many previous turns to include. |
 | `db=...` | Persistent database for memory across processes (e.g. `SqliteDb`). |
 | `markdown=True` | Render output as Markdown. |
-| `show_tool_calls=True` | Print each tool call & result (great for debugging). |
-| `debug_mode=True` | Verbose internal logging. |
+| `debug_mode=True` | Verbose internal logging (tool calls + intermediate state). |
+| `print_response(..., stream=True)` | Streams tool calls & answer live (use during dev). |
 
 ---
 
@@ -82,8 +82,9 @@ from agno.tools.yfinance import YFinanceTools
 agent = Agent(
     model=OpenAIChat(id="gpt-4o-mini"),
     tools=[DuckDuckGoTools(), CalculatorTools(), YFinanceTools(stock_price=True)],
-    show_tool_calls=True,
 )
+# Tool calls stream automatically:
+agent.print_response("Search ...", stream=True)
 ```
 
 ---
@@ -112,7 +113,6 @@ def save_note(filename: str, content: str) -> str:
 agent = Agent(
     model=OpenAIChat(id="gpt-4o-mini"),
     tools=[save_note],
-    show_tool_calls=True,
 )
 ```
 

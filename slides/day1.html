@@ -679,19 +679,19 @@ agent = Agent(
     model=OpenAIChat(id="gpt-4o-mini"),
     tools=[DuckDuckGoTools()],
     instructions="Always cite the URL of any source you use.",
-    show_tool_calls=True,   # 👈 see what's happening
     markdown=True,
 )
 
 agent.print_response(
     "What was the latest news about AI in the Philippines?",
-    stream=True,
+    stream=True,    # 👈 streams tool calls + final answer live
 )
     </code></pre>
     <aside class="notes">
-      "One import, one entry in the tools list. Done. The agent can now search the web. Notice
-      `show_tool_calls=True` — leave that on during dev, always. You want to see exactly what the
-      model is doing, not just the final answer. Half my debugging is reading tool traces."
+      "One import, one entry in the tools list. Done. The agent can now search the web.
+      `print_response(stream=True)` shows you tool calls as they happen — leave that on during dev,
+      always. You want to see exactly what the model is doing, not just the final answer. Half my
+      debugging is reading tool traces."
     </aside>
   </section>
 
@@ -811,7 +811,7 @@ $ python lab3.py "Latest agentic AI papers, save a brief"
 
 ✓ notes/agentic-ai-papers-may.md
     </code></pre>
-    <p class="muted"><code>show_tool_calls=True</code> turns this on. Always on during dev.</p>
+    <p class="muted"><code>print_response(stream=True)</code> shows this live. Always on during dev.</p>
     <aside class="notes">
       "This is what success looks like. Two tool calls, clean transitions, file lands on disk.
       In Lab 3 you'll see this stream past in real time. When it goes wrong, you'll also see it —
