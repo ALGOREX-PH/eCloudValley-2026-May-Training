@@ -112,7 +112,7 @@ OPENAI_API_KEY=sk-your-actual-key-here
 
 ---
 
-## 7. Run the smoke test
+## 6. Run the smoke test
 
 ```bash
 python labs/day1/lab1_first_agent/starter.py
