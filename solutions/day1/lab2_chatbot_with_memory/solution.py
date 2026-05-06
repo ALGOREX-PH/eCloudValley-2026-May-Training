@@ -7,8 +7,8 @@ Customer-support chatbot with persistent SQLite memory.
 from pathlib import Path
 
 from agno.agent import Agent
+from agno.db.sqlite import SqliteDb
 from agno.models.openai import OpenAIChat
-from agno.storage.sqlite import SqliteStorage
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,16 +18,16 @@ STORAGE_DIR.mkdir(exist_ok=True)
 
 
 def build_agent(session_id: str) -> Agent:
-    storage = SqliteStorage(
-        table_name="chat_sessions",
+    db = SqliteDb(
         db_file=str(STORAGE_DIR / "chat.db"),
+        session_table="chat_sessions",
     )
 
     agent = Agent(
         model=OpenAIChat(id="gpt-4o-mini"),
-        storage=storage,
+        db=db,
         session_id=session_id,
-        add_history_to_messages=True,
+        add_history_to_context=True,
         num_history_runs=10,
         instructions=[
             "You are CloudKaiju Support 🦖 — a helpful, slightly cheeky support agent.",

@@ -507,7 +507,7 @@ agent.run("What's my name?")
     <pre><code data-trim data-line-numbers="3-5" class="language-python">
 agent = Agent(
     model=OpenAIChat(id="gpt-4o-mini"),
-    add_history_to_messages=True,   # 👈 include past turns
+    add_history_to_context=True,    # 👈 include past turns
     num_history_runs=10,             # 👈 how many to include
     instructions="You are a friendly assistant.",
 )
@@ -526,22 +526,22 @@ agent.run("What's my name?")
   </section>
 
   <section>
-    <h2>Persistent memory with SqliteStorage</h2>
+    <h2>Persistent memory with SqliteDb</h2>
     <pre><code data-trim data-line-numbers="2,5-8,11-12" class="language-python">
 from agno.agent import Agent
-from agno.storage.sqlite import SqliteStorage
+from agno.db.sqlite import SqliteDb
 from agno.models.openai import OpenAIChat
 
-storage = SqliteStorage(
-    table_name="chat_sessions",
+db = SqliteDb(
     db_file="agent_storage/chat.db",
+    session_table="chat_sessions",
 )
 
 agent = Agent(
     model=OpenAIChat(id="gpt-4o-mini"),
-    storage=storage,
-    session_id="user-42",       # same id = same chat
-    add_history_to_messages=True,
+    db=db,
+    session_id="user-42",        # same id = same chat
+    add_history_to_context=True,
 )
     </code></pre>
     <p>Restart the process. Same <code>session_id</code> → picks up where it left off.</p>
@@ -579,8 +579,8 @@ agent = Agent(
     <h2>Module 2 recap</h2>
     <ul>
       <li>"Memory" = sending past turns back into the model</li>
-      <li><code>add_history_to_messages</code> handles in-session memory</li>
-      <li><code>SqliteStorage</code> + <code>session_id</code> handles persistence</li>
+      <li><code>add_history_to_context</code> handles in-session memory</li>
+      <li><code>SqliteDb</code> + <code>session_id</code> handles persistence</li>
       <li>Personas live in <code>instructions</code> — short and specific</li>
     </ul>
     <aside class="notes">

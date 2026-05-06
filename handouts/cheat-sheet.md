@@ -30,9 +30,9 @@ agent.print_response("Hello, world!", stream=True)
 | `model=` | The LLM. `OpenAIChat`, `Claude`, `Gemini`, etc. |
 | `instructions=` | System prompt. String or list of strings. |
 | `tools=[...]` | List of tool functions or built-in toolkits. |
-| `add_history_to_messages=True` | Include previous turns of the conversation. |
+| `add_history_to_context=True` | Include previous turns of the conversation. |
 | `num_history_runs=5` | How many previous turns to include. |
-| `storage=...` | Persistent storage for memory across processes. |
+| `db=...` | Persistent database for memory across processes (e.g. `SqliteDb`). |
 | `markdown=True` | Render output as Markdown. |
 | `show_tool_calls=True` | Print each tool call & result (great for debugging). |
 | `debug_mode=True` | Verbose internal logging. |
@@ -59,12 +59,12 @@ result = agent.run("Multiply that by 10")  # Agent remembers if memory is on
 ## 4. Persistent memory
 
 ```python
-from agno.storage.sqlite import SqliteStorage
+from agno.db.sqlite import SqliteDb
 
 agent = Agent(
     model=OpenAIChat(id="gpt-4o-mini"),
-    storage=SqliteStorage(table_name="sessions", db_file="agent.db"),
-    add_history_to_messages=True,
+    db=SqliteDb(db_file="agent.db", session_table="sessions"),
+    add_history_to_context=True,
     num_history_runs=10,
     session_id="user-42",  # The same session_id resumes the same chat
 )
