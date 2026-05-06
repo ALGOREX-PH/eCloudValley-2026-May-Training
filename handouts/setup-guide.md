@@ -90,7 +90,7 @@ The install should take 1–3 minutes.
 
 ---
 
-## 6. Configure your OpenAI API key
+## 5. Configure your OpenAI API key
 
 The speaker emailed you a workshop API key (a string starting with `sk-...`). Paste it into your local `.env` file:
 
