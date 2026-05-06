@@ -131,6 +131,7 @@ You should see streaming text from the agent. If you do, you're ready for class.
 | `RateLimitError` | The workshop key has limits — try again in 30 sec, or message the speaker. |
 | `python: command not found` (macOS) | Use `python3` instead of `python` everywhere. |
 | Nothing prints on Windows | Make sure you ran the script in the activated venv terminal, not in a fresh window. |
+| `Set-ExecutionPolicy ... script disabled` (Windows) | Re-run step 4's PowerShell exec policy fix in an admin shell. |
 
 ---
 
