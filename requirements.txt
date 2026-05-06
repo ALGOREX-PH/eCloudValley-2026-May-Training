@@ -24,3 +24,7 @@ python-dotenv>=1.0.0
 
 # Optional: SQL storage backend for Agno memory
 sqlalchemy>=2.0.0
+
+# Lab 3B (optional bonus): DOCX + PDF output
+python-docx>=1.1.0
+fpdf2>=2.7.0
