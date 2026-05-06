@@ -28,9 +28,10 @@
     eCloudValley Philippines · AWS Office BGC · May 2026
   </div>
   <aside class="notes">
-    Welcome everyone. This is Day 1 of 2. Tonight is about laying the foundation —
-    by the end of this session you'll have a tool-using agent running on your laptop.
-    Tomorrow we feed it your own data and ship it.
+    Open easy. Don't read the title — they can read.
+    "Alright. Day 1 of 2. By the time you walk out tonight, you'll have a tool-using agent
+    running on your laptop. Not a slide of one. A real one. Tomorrow we feed it your data and ship it.
+    That's the deal." Then move on. Don't linger on the title slide.
   </aside>
 </section>
 
@@ -41,23 +42,29 @@
     <div class="columns">
       <div>
         <ul>
-          <li>I build & ship agentic systems for a living</li>
-          <li>I've shipped to AWS, GCP, on-prem — they all bite differently</li>
-          <li>Tonight I'll show you the smallest amount of code that does the most</li>
+          <li>Co-founder, AI × Blockchain Lead at BayaniChain Ventures</li>
+          <li>Build &amp; ship agentic systems for a living</li>
+          <li>Tonight: smallest amount of code that does the most</li>
         </ul>
       </div>
       <div class="card">
         <h4>How tonight works</h4>
         <ul>
           <li>~30% slides, ~70% you typing</li>
-          <li>2 short breaks (10 min each)</li>
+          <li>Step out whenever — no formal breaks</li>
           <li>Interrupt me — questions are the lab</li>
         </ul>
       </div>
     </div>
     <aside class="notes">
-      Quick speaker intro. Emphasize this is a workshop, not a lecture.
-      Set the expectation that they'll be coding most of the time.
+      Casual. "I'm Danielle. Day job — I lead AI and blockchain at BayaniChain Ventures.
+      Before that, spent a few years getting bullied by algorithms on StackLeague until eventually
+      they let me win three years in a row. So I've taken hits and I've thrown them.
+      That's the lens for tonight."
+
+      Then frame the format: "This is not a lecture. If I'm talking and your hands aren't on the keyboard,
+      something's wrong. Interrupt me. The dumb question — the one you think is dumb — is usually
+      the one everyone else needed asked. Ask it." Move on quick. Don't milk the intro.
     </aside>
   </section>
 
@@ -66,13 +73,17 @@
     <table>
       <tr><th>Time</th><th>What we do</th></tr>
       <tr><td>5:00 – 5:15</td><td>Setup check + intros</td></tr>
-      <tr><td>5:15 – 5:50</td><td><strong>Module 1</strong> — Fundamentals of Agentic AI</td></tr>
-      <tr><td>5:50 – 6:00</td><td>☕ Break</td></tr>
-      <tr><td>6:00 – 6:45</td><td><strong>Module 2</strong> — Building Chatbots <span class="pill">Lab 1</span><span class="pill">Lab 2</span></td></tr>
-      <tr><td>6:45 – 6:55</td><td>☕ Break</td></tr>
-      <tr><td>6:55 – 7:50</td><td><strong>Module 3</strong> — Tools & Reasoning <span class="pill">Lab 3</span></td></tr>
-      <tr><td>7:50 – 8:00</td><td>Wrap & Day 2 teaser</td></tr>
+      <tr><td>5:15 – 5:55</td><td><strong>Module 1</strong> — Fundamentals of Agentic AI</td></tr>
+      <tr><td>5:55 – 6:50</td><td><strong>Module 2</strong> — Building Chatbots <span class="pill">Lab 1</span><span class="pill">Lab 2</span></td></tr>
+      <tr><td>6:50 – 7:50</td><td><strong>Module 3</strong> — Tools &amp; Reasoning <span class="pill">Lab 3</span></td></tr>
+      <tr><td>7:50 – 8:00</td><td>Wrap &amp; Day 2 teaser</td></tr>
     </table>
+    <aside class="notes">
+      "Three modules. Three labs. One working agent at the end. No formal breaks —
+      step out for coffee, restroom, smoke, whatever, whenever you need to. The labs are
+      paired and the slides will still be here when you get back. If we're running long,
+      labs win — I'll trim slides, never the typing."
+    </aside>
   </section>
 
   <section>
@@ -88,7 +99,10 @@ python -c "import os; print('key:', os.environ.get('OPENAI_API_KEY','NOT SET')[:
       🖐️ Hand up if either command failed. We fix it now, not at 6 PM.
     </blockquote>
     <aside class="notes">
-      Wait until everyone reports green. This investment pays off — fixing setup mid-lab is brutal.
+      "Run both. If either one screams at you, hand up. I will personally come over.
+      We're spending two minutes here so we don't spend twenty minutes mid-lab.
+      Trust me — I've watched a whole room melt down at 6:30 because someone forgot to source their venv at 5."
+      Wait until everyone's green. Don't move on with broken laptops in the room.
     </aside>
   </section>
 </section>
@@ -98,6 +112,10 @@ python -c "import os; print('key:', os.environ.get('OPENAI_API_KEY','NOT SET')[:
   <div class="module-num">Module 01 · 35 minutes</div>
   <h1>Fundamentals of Agentic AI</h1>
   <p class="muted">What's an agent, really? When should you build one — and when shouldn't you?</p>
+  <aside class="notes">
+    "Module one. Theory. I'll keep it short. The whole point of this section is so that
+    when you read 'agentic' on LinkedIn next week, you know whether it's real or marketing."
+  </aside>
 </section>
 
 <!-- ========== MODULE 1 ========== -->
@@ -109,8 +127,11 @@ python -c "import os; print('key:', os.environ.get('OPENAI_API_KEY','NOT SET')[:
     </blockquote>
     <p class="muted">That's it. The rest is engineering.</p>
     <aside class="notes">
-      This definition is from Anthropic's "Building Effective Agents" — it's the cleanest one out there.
-      Resist the urge to over-define. The complexity is in the engineering, not the concept.
+      "There are a hundred definitions of 'agent' on the internet. Most of them are someone selling something.
+      This one's from Anthropic's 'Building Effective Agents' paper, and it's the cleanest.
+      LLM. In a loop. Deciding. Based on what it sees. Four ideas. Memorize that, you can debate
+      anybody on Twitter and win."
+      Pause. "Everything else — the frameworks, the patterns, the buzzwords — is engineering on top of that loop."
     </aside>
   </section>
 
@@ -147,6 +168,12 @@ agent.run("Find &amp; sum X")
         </code></pre>
       </div>
     </div>
+    <aside class="notes">
+      "Three things people confuse on a daily basis. LLM call — fire and forget. Chatbot — has a memory of the chat,
+      that's it. Agent — picks tools, takes actions, loops until it's done. ChatGPT in 2022 was a chatbot.
+      ChatGPT today, with browsing and code, is an agent. Same model under the hood. The difference is the
+      loop and the tools. Everything you build tonight, you'll build by walking left to right across this slide."
+    </aside>
   </section>
 
   <section>
@@ -166,8 +193,11 @@ agent.run("Find &amp; sum X")
       </div>
     </div>
     <aside class="notes">
-      An agentic system has all four to some degree. Workflows have only the first two
-      and often a fixed sequence. The line is fuzzy on purpose.
+      "Four. Autonomy, tools, memory, reasoning. If your system has all four to some degree, it's agentic.
+      If it has only the first two and follows a fixed script, it's a workflow. The line is fuzzy on purpose —
+      anyone who tells you there's a hard boundary is selling a course."
+      Beat. "Tonight: Module 2 covers memory. Module 3 covers tools. Reasoning happens for free as a
+      side effect — the model is smart, it'll do most of the planning if you let it."
     </aside>
   </section>
 
@@ -184,6 +214,15 @@ agent.run("Find &amp; sum X")
     <blockquote class="warning">
       Pick the leftmost option that solves your problem. Don't lead with "agent."
     </blockquote>
+    <aside class="notes">
+      "Read this left to right. Cheaper, more predictable, easier to test on the left.
+      Sexier, more powerful, completely unhinged on the right."
+      Pause for the laugh.
+      "My rule: pick the leftmost option that solves your problem. If a script works, ship the script.
+      If RAG works, ship RAG. Don't reach for multi-agent because it sounds cool on a pitch deck.
+      I've audited too many systems where someone built a five-agent constellation when a single
+      function call would've done it. They look impressive in demos. They die in production."
+    </aside>
   </section>
 
   <section>
@@ -201,6 +240,12 @@ agent.run("Find &amp; sum X")
    └───────────────────────────────────────┘
     </pre>
     <p class="muted">Yao et al., 2022 — every modern agent uses some flavor of this.</p>
+    <aside class="notes">
+      "ReAct. Reason, Act, Observe. Repeat. Yao et al., 2022. Every framework you've heard of —
+      LangGraph, OpenAI Agents, Agno — they all run some version of this loop under the hood.
+      Different sugar, same recipe."
+      "By Lab 3 you'll watch this trace stream past in your terminal. Once you see it, you can't unsee it."
+    </aside>
   </section>
 
   <section>
@@ -213,8 +258,10 @@ agent.run("Find &amp; sum X")
       <tr><td><strong>Routing</strong></td><td>Many specialists, one entry</td><td>Clean separation, slight latency</td></tr>
     </table>
     <aside class="notes">
-      Don't get attached to pattern names. Pick what's needed for the problem.
-      We'll do ReAct in Lab 3 — it's the workhorse.
+      "Don't memorize names. Memorize trade-offs. When someone on your team says 'let's do multi-agent',
+      the next words out of your mouth should be 'how are we going to debug it?' If they look at you
+      blank, you have your answer."
+      "We're doing ReAct in Lab 3. It's the workhorse. Master it, the others are variations."
     </aside>
   </section>
 
@@ -227,19 +274,26 @@ agent.run("Find &amp; sum X")
           <li>The flow is deterministic → use a workflow</li>
           <li>You need millisecond latency</li>
           <li>One LLM call already works</li>
-          <li>The task is safety-critical &amp; can't tolerate hallucination</li>
+          <li>Safety-critical &amp; can't tolerate hallucination</li>
         </ul>
       </div>
       <div>
         <h4 class="accent-mint">Do</h4>
         <ul>
-          <li>The path branches based on intermediate results</li>
-          <li>You need to call out to tools to find the answer</li>
+          <li>Path branches based on intermediate results</li>
+          <li>You need tools to find the answer</li>
           <li>The user's intent is open-ended</li>
-          <li>You want the system to recover from its own errors</li>
+          <li>System should recover from its own errors</li>
         </ul>
       </div>
     </div>
+    <aside class="notes">
+      "Real talk. Most production wins from 'AI' in the last two years were not agents.
+      They were a single well-prompted LLM call wrapped in a function. Don't be the engineer
+      who built a five-tool agent to do regex. Earn the agent. The system tells you when it needs one."
+      "If your boss says 'we need an agent for X' — your job is to ask whether X actually needs one.
+      Half the time, no. Other half, yes, and now you know which half you're in."
+    </aside>
   </section>
 
   <section>
@@ -268,8 +322,11 @@ agent.print_response("Hi!", stream=True)
       </div>
     </div>
     <aside class="notes">
-      I'm not selling Agno — there are great alternatives (LangGraph, OpenAI Agents SDK, Pydantic AI).
-      I picked Agno because it's the smallest amount of API surface to learn for the most ground covered.
+      "I'm not a salesman for Agno. LangGraph is great. OpenAI Agents SDK is great. Pydantic AI is great.
+      I picked Agno for tonight because it has the smallest amount of API surface to learn for the most
+      ground covered. You'll see — six lines and you have a streaming agent. Six lines."
+      "If after Day 2 you decide you want LangGraph, go. The patterns transfer. The framework is the
+      least important thing in this stack."
     </aside>
   </section>
 
@@ -284,6 +341,10 @@ agent.print_response("Hi!", stream=True)
     <blockquote class="success">
       Next: let's actually build one.
     </blockquote>
+    <aside class="notes">
+      "That's all the theory you get tonight. Four bullets. Memorize the last one — earn the agent.
+      Now we type."
+    </aside>
   </section>
 </section>
 
@@ -292,6 +353,11 @@ agent.print_response("Hi!", stream=True)
   <div class="module-num">Module 02 · 45 minutes</div>
   <h1>Building AI-Powered Chatbots</h1>
   <p class="muted">From a one-shot LLM call to a chatbot with persistent memory.</p>
+  <aside class="notes">
+    "Open your terminals. By the end of this module you'll have a chatbot that remembers your
+    name across process restarts. Sounds simple. It's three concepts stacked on top of each other
+    and most people get one of them wrong."
+  </aside>
 </section>
 
 <!-- ========== MODULE 2 ========== -->
@@ -310,6 +376,13 @@ messages = [
 response = client.responses.create(model="gpt-4o-mini", input=messages)
     </code></pre>
     <p class="muted">"Memory" in chatbots = sending the history back every time.</p>
+    <aside class="notes">
+      "Look at this carefully. The model has no memory. None. Zero. Every API call, you send the
+      entire conversation back. That's the secret. ChatGPT 'remembering' you is just OpenAI keeping
+      your messages on their side and prepending them. There's no magic."
+      "Why does this matter? Because every turn costs tokens. Every turn. Long conversations get
+      expensive fast. You'll feel that in Lab 2."
+    </aside>
   </section>
 
   <section>
@@ -317,7 +390,7 @@ response = client.responses.create(model="gpt-4o-mini", input=messages)
     <table>
       <tr><th>Knob</th><th>What it does</th><th>Default</th></tr>
       <tr><td><code>temperature</code></td><td>Randomness. 0 = deterministic, 2 = wild</td><td>1.0</td></tr>
-      <tr><td><code>max_tokens</code></td><td>Hard cap on the response length</td><td>~4096</td></tr>
+      <tr><td><code>max_tokens</code></td><td>Hard cap on response length</td><td>~4096</td></tr>
       <tr><td><code>system</code></td><td>Persistent persona / rules</td><td>—</td></tr>
       <tr><td><code>stream=True</code></td><td>Token-by-token output</td><td>False</td></tr>
       <tr><td><code>tools</code></td><td>Functions the model may call</td><td>—</td></tr>
@@ -325,6 +398,13 @@ response = client.responses.create(model="gpt-4o-mini", input=messages)
     <blockquote>
       For agents: <code>temperature=0</code> for tool selection, ≥0.7 for creative output.
     </blockquote>
+    <aside class="notes">
+      "Five knobs. Memorize three. Temperature, system, tools. The rest are tuning."
+      "Temperature is the one people abuse. Default is 1.0 which is fine for chat. For agents
+      picking tools — set it to zero. You don't want creativity in tool selection. You want the
+      same input to produce the same tool call every time. Save the creativity for the writing,
+      not the routing."
+    </aside>
   </section>
 
   <section class="lab-banner-section">
@@ -341,6 +421,11 @@ response = client.responses.create(model="gpt-4o-mini", input=messages)
       <li>What streaming looks like in the terminal</li>
     </ul>
     <p class="accent-cyan">→ Open <code>labs/day1/lab1_first_agent/</code></p>
+    <aside class="notes">
+      "Lab 1 is the cheapest. Ten minutes. We do it together — I type, you type, we don't move on
+      until everyone's seeing tokens stream. If yours doesn't run, raise your hand immediately.
+      Don't sit there proud. Pride is expensive in this room."
+    </aside>
   </section>
 
   <section>
@@ -367,8 +452,10 @@ agent.print_response(
 )
     </code></pre>
     <aside class="notes">
-      Walk through line by line. Show the streaming. Show what changes when you remove `stream=True`.
-      Show what changes when `instructions` is swapped.
+      "Walk through line by line. Show streaming. Then I'll do a live edit:
+      remove `stream=True` — pause is jarring. Put it back.
+      Swap instructions — model voice changes immediately.
+      Change model id to a non-existent one — show how the error reads. Failure modes are part of the lab."
     </aside>
   </section>
 
@@ -382,6 +469,13 @@ agent.run("What's my name?")
     <blockquote class="warning">
       Each <code>run()</code> is a fresh API call. The agent has no memory unless we give it some.
     </blockquote>
+    <aside class="notes">
+      "Two lines. Should work. Doesn't. The model is acting like it has amnesia because it does.
+      Every run is a fresh API call. We told it our name in call one and threw the receipt away.
+      Call two starts from nothing."
+      "This is the moment people freak out and reach for vector databases. Don't. We just need to
+      send the history back. That's all 'memory' is at this layer."
+    </aside>
   </section>
 
   <section>
@@ -393,6 +487,11 @@ agent.run("What's my name?")
       <tr><td><strong>User memory</strong></td><td>Distilled facts about the user</td><td>Forever</td></tr>
     </table>
     <p class="muted">Today we cover the first two. User memory is a Day 2 stretch goal.</p>
+    <aside class="notes">
+      "Three flavors. Don't conflate them. Conversation history is RAM — gone when the process dies.
+      Session storage is disk — survives a restart. User memory is the agent quietly building a
+      profile of you, like how good chat apps remember your preferences. Different tools for different jobs."
+    </aside>
   </section>
 
   <section>
@@ -409,7 +508,13 @@ agent.run("Hi, I'm Danielle.")
 agent.run("What's my name?")
 # → "Your name is Danielle." ✅
     </code></pre>
-    <p class="muted">The conversation is held in memory <em>only while the process runs</em>. Restart, lose it.</p>
+    <p class="muted">In-process only. Restart, lose it.</p>
+    <aside class="notes">
+      "Two flags. That's the whole fix for in-session memory. Set them, your agent remembers.
+      `num_history_runs=10` means it sends the last ten turns. Crank that to 100 and watch your
+      token bill cry. There's a real trade-off between context and cost — pick a number that
+      matches your use case."
+    </aside>
   </section>
 
   <section>
@@ -431,7 +536,14 @@ agent = Agent(
     add_history_to_messages=True,
 )
     </code></pre>
-    <p>Now restart the process. Same <code>session_id</code> → it picks up where it left off.</p>
+    <p>Restart the process. Same <code>session_id</code> → picks up where it left off.</p>
+    <aside class="notes">
+      "SQLite. One file. Survives restarts. In production you'd swap this for Postgres but the
+      interface is the same — `session_id` is your conversation key. Same id, same chat. Different
+      id, different chat. That's also how you get multi-user — one session per user."
+      "Common bug coming up in Lab 2: people forget to set `session_id` and every run gets a new
+      UUID. Then they wonder why memory doesn't persist. Watch for that."
+    </aside>
   </section>
 
   <section class="lab-banner-section">
@@ -443,12 +555,15 @@ agent = Agent(
     <p>A chatbot for a fictional SaaS ("CloudKaiju") that:</p>
     <ul>
       <li>Has a defined persona (helpful, slightly cheeky, escalates politely)</li>
-      <li>Remembers the user's name and last issue across runs</li>
-      <li>Persists to SQLite so a process restart doesn't lose context</li>
+      <li>Remembers user's name and last issue across runs</li>
+      <li>Persists to SQLite — process restart doesn't lose context</li>
     </ul>
     <p class="accent-cyan">→ Open <code>labs/day1/lab2_chatbot_with_memory/</code></p>
     <aside class="notes">
-      Walk around while pairs work. Common bug: not setting session_id, so each run is a new session.
+      "Pair up. Twenty minutes. The success test is simple — start the process, tell it your name,
+      kill the process with Ctrl+C, start it again, ask it your name. If it remembers, you're done.
+      If it doesn't, check `session_id` first. I'll be walking around — wave me over if you're stuck
+      for more than two minutes."
     </aside>
   </section>
 
@@ -456,18 +571,16 @@ agent = Agent(
     <h2>Module 2 recap</h2>
     <ul>
       <li>"Memory" = sending past turns back into the model</li>
-      <li>Agno's <code>add_history_to_messages</code> handles in-session memory</li>
+      <li><code>add_history_to_messages</code> handles in-session memory</li>
       <li><code>SqliteStorage</code> + <code>session_id</code> handles persistence</li>
-      <li>Personas live in <code>instructions</code>, kept short and specific</li>
+      <li>Personas live in <code>instructions</code> — short and specific</li>
     </ul>
+    <aside class="notes">
+      "You just built a stateful chatbot. Two modules ago that probably sounded like real engineering.
+      Turns out it's twelve lines. The hard part isn't the code — it's knowing which twelve lines.
+      Module three is where chatbots become agents. Stretch your hands. Let's go."
+    </aside>
   </section>
-</section>
-
-<!-- ========== BREAK ========== -->
-<section>
-  <h1 class="huge-text accent-cyan" style="text-align:center; margin-top: 2em;">☕ Break</h1>
-  <p style="text-align:center; font-size:1.5em" class="muted">10 minutes. Stretch, refill, restroom.</p>
-  <p style="text-align:center; margin-top:2em">Back at <strong class="accent-mint">6:55</strong>.</p>
 </section>
 
 <!-- ========== MODULE 3 DIVIDER ========== -->
@@ -475,6 +588,10 @@ agent = Agent(
   <div class="module-num">Module 03 · 55 minutes</div>
   <h1>Tools &amp; Reasoning</h1>
   <p class="muted">Where chatbots become agents.</p>
+  <aside class="notes">
+    "Last module of the night. This is where it stops being a chatbot and starts being an agent.
+    The difference is one line of code and a whole new class of bugs. Let's go."
+  </aside>
 </section>
 
 <!-- ========== MODULE 3 ========== -->
@@ -482,9 +599,20 @@ agent = Agent(
   <section>
     <h2>What is a "tool"?</h2>
     <blockquote class="success">
-      A <strong>tool</strong> is a Python function the LLM is allowed to call. The model decides <em>when</em>, <em>which</em>, and <em>with what arguments</em>.
+      A <strong>tool</strong> is a Python function the LLM is allowed to call.
     </blockquote>
-    <p>Under the hood: the function's signature + docstring is sent to the model as a JSON schema. The model returns a structured "call this with these args" response. The framework runs the function and feeds the result back.</p>
+    <ul>
+      <li>The model decides <em>when</em>, <em>which</em>, and <em>with what args</em></li>
+      <li>Function signature + docstring → JSON schema → sent to the model</li>
+      <li>Model returns "call this with these args" → framework runs it → result fed back</li>
+    </ul>
+    <aside class="notes">
+      "A tool is just a Python function. That's it. You write the function. The framework wraps it
+      in a JSON schema. The model sees the schema and decides whether to call it. The framework
+      runs the function and gives the model the result. Loop."
+      "The model is not running your code — it's asking the framework to run your code on its behalf.
+      That's an important distinction when you start worrying about security."
+    </aside>
   </section>
 
   <section>
@@ -504,6 +632,12 @@ agent = Agent(
    ← Final: "49°C combined."
     </pre>
     <p class="muted">This is ReAct, executed for you by Agno.</p>
+    <aside class="notes">
+      "Trace it with your eyes. The model could've tried to add the temperatures itself. It chose
+      not to — it called the calculator. Why? Because we told it to in the instructions, or because
+      we set temperature low and it learned tool use is the safer move. LLMs hallucinate math. Don't
+      let them do math. Give them a calculator."
+    </aside>
   </section>
 
   <section>
@@ -516,8 +650,14 @@ agent = Agent(
       <tr><td><code>WikipediaTools</code></td><td>Encyclopedia lookups</td></tr>
       <tr><td><code>ShellTools</code></td><td>Run shell commands (be careful!)</td></tr>
       <tr><td><code>FileTools</code></td><td>Read/write the local filesystem</td></tr>
-      <tr><td><code>PythonTools</code></td><td>Execute Python code in a sandbox</td></tr>
+      <tr><td><code>PythonTools</code></td><td>Execute Python in a sandbox</td></tr>
     </table>
+    <aside class="notes">
+      "Batteries included. Most of what you need on Day 1 is already wrapped. ShellTools and
+      PythonTools are spicy — they let the model run commands or code. Don't ship those to production
+      without a sandbox unless you enjoy reading post-mortems. For tonight, fine, dev box, sandbox is
+      your laptop."
+    </aside>
   </section>
 
   <section>
@@ -540,6 +680,11 @@ agent.print_response(
     stream=True,
 )
     </code></pre>
+    <aside class="notes">
+      "One import, one entry in the tools list. Done. The agent can now search the web. Notice
+      `show_tool_calls=True` — leave that on during dev, always. You want to see exactly what the
+      model is doing, not just the final answer. Half my debugging is reading tool traces."
+    </aside>
   </section>
 
   <section>
@@ -565,6 +710,12 @@ def save_note(filename: str, content: str) -> str:
     path.write_text(content, encoding="utf-8")
     return str(path.resolve())
     </code></pre>
+    <aside class="notes">
+      "A custom tool is a decorated function with a real docstring and real types. That's the API.
+      You're not writing prompts — you're writing functions. Your existing Python skills transfer
+      directly. Look at the docstring. Notice the example in the args. The model reads that. The
+      model uses that to decide what to pass."
+    </aside>
   </section>
 
   <section>
@@ -592,6 +743,14 @@ def save_note(filename: str, content: str) -> str:
     <blockquote class="warning">
       The docstring IS the API contract. Vague docstrings = vague tool use.
     </blockquote>
+    <aside class="notes">
+      "This is what the model sees. Your function got translated into a JSON schema. Every word in
+      your docstring is a hint. Every type is a constraint. If your tool keeps getting called with
+      bad arguments, the answer is almost always: improve the docstring. Not the prompt. The
+      docstring."
+      Beat. "This is the single highest-leverage habit you can build tonight. Treat docstrings like
+      they're the model's only window into your codebase. Because they are."
+    </aside>
   </section>
 
   <section>
@@ -614,6 +773,14 @@ def lookup_invoice(invoice_id: str) -> dict:
     """
     ...
     </code></pre>
+    <aside class="notes">
+      "Three rules. Tape them above your monitor."
+      "One — verbs. The model picks tools by name first, description second. `get_user` reads as an
+      action. `user` reads as a noun. Be a verb."
+      "Two — tight types. `dict` and `Any` are how you get hallucinated arguments at 2 AM."
+      "Three — tell it when NOT to call. That second sentence in the docstring saves more bugs than
+      any prompt I've ever written."
+    </aside>
   </section>
 
   <section>
@@ -637,6 +804,11 @@ $ python lab3.py "Latest agentic AI papers, save a brief"
 ✓ notes/agentic-ai-papers-may.md
     </code></pre>
     <p class="muted"><code>show_tool_calls=True</code> turns this on. Always on during dev.</p>
+    <aside class="notes">
+      "This is what success looks like. Two tool calls, clean transitions, file lands on disk.
+      In Lab 3 you'll see this stream past in real time. When it goes wrong, you'll also see it —
+      and seeing the wrong thing is more educational than seeing the right thing."
+    </aside>
   </section>
 
   <section>
@@ -645,10 +817,16 @@ $ python lab3.py "Latest agentic AI papers, save a brief"
       <tr><th>Symptom</th><th>Likely cause</th></tr>
       <tr><td>Tool never called</td><td>Vague docstring; model doesn't know when to use it</td></tr>
       <tr><td>Hallucinated args (wrong invoice ID)</td><td>No examples in docstring; types too loose</td></tr>
-      <tr><td>Infinite loop of tool calls</td><td>Tool returns nothing useful; agent retries forever — set <code>tool_call_limit</code></td></tr>
-      <tr><td>Slow responses</td><td>Tools called serially. Use parallel tool calls when independent.</td></tr>
+      <tr><td>Infinite loop of tool calls</td><td>Tool returns nothing useful; set <code>tool_call_limit</code></td></tr>
+      <tr><td>Slow responses</td><td>Tools called serially; use parallel calls when independent</td></tr>
       <tr><td>Token blowup</td><td>Tool returns huge JSON; summarize before returning</td></tr>
     </table>
+    <aside class="notes">
+      "These are the five you'll meet in production. I've debugged all five. Tool never called is the
+      most common — model just doesn't know it's relevant. Improve the description, problem solved.
+      Infinite loops are the scariest — set `tool_call_limit` on every agent before you ship.
+      I'll repeat that — set `tool_call_limit` before you ship. I will not pay your OpenAI bill."
+    </aside>
   </section>
 
   <section class="lab-banner-section">
@@ -659,15 +837,17 @@ $ python lab3.py "Latest agentic AI papers, save a brief"
     <h3>Build an agent that:</h3>
     <ul>
       <li>Takes a topic from the command line</li>
-      <li>Searches the web using <code>DuckDuckGoTools</code></li>
+      <li>Searches the web with <code>DuckDuckGoTools</code></li>
       <li>Synthesizes findings into a structured markdown brief</li>
       <li>Saves it via your custom <code>save_note</code> tool</li>
       <li>Cites every source URL</li>
     </ul>
     <p class="accent-cyan">→ Open <code>labs/day1/lab3_tool_using_agent/</code></p>
     <aside class="notes">
-      This is the capstone of Day 1. If they get this working, they've built a real agent.
-      Walk around. Pairs that finish early: ask them to add a second custom tool.
+      "Capstone of Day 1. If you finish this, you have built a real agent. Not a toy. A real one.
+      Thirty minutes, pairs. Walk around. If a pair finishes early — and some will — give them this
+      stretch goal: add a second custom tool that fetches the full text of a URL and summarizes it
+      before saving. That's a 'fetch_and_extract' kind of tool. Real research workflow."
     </aside>
   </section>
 
@@ -675,13 +855,19 @@ $ python lab3.py "Latest agentic AI papers, save a brief"
     <h2>Lab 3 debrief</h2>
     <ul>
       <li>Whose agent searched the cleanest queries? Show the trace.</li>
-      <li>Whose agent went off the rails? Show that trace too — it's instructive.</li>
+      <li>Whose agent went off the rails? Show that one too — it's instructive.</li>
       <li>What would you add next?</li>
     </ul>
     <blockquote class="success">
       You just built — from scratch — a multi-step, tool-using agent.
       That's the foundation for everything in Day 2.
     </blockquote>
+    <aside class="notes">
+      "Pull two volunteers. One whose run was clean — show the team how a happy trace reads.
+      One whose run got weird — those are gold, the wreckage teaches more than the win.
+      Then ask 'what would you add next' — let them daydream for thirty seconds. Tomorrow we'll
+      actually build the things they say."
+    </aside>
   </section>
 </section>
 
@@ -703,7 +889,12 @@ $ python lab3.py "Latest agentic AI papers, save a brief"
         <p>Tool-using research agent with custom + built-in tools</p>
       </div>
     </div>
-    <p class="muted" style="margin-top:1em">Three labs, three working agents, on your machine.</p>
+    <p class="muted" style="margin-top:1em">Three labs. Three working agents. On your machine.</p>
+    <aside class="notes">
+      "Look at the three. Three hours ago, none of you had this. Now you all do.
+      Every framework on the market — LangGraph, OpenAI Agents, CrewAI — they all run some
+      version of what you built tonight. You have the mental model now. The rest is API surface."
+    </aside>
   </section>
 
   <section>
@@ -711,11 +902,18 @@ $ python lab3.py "Latest agentic AI papers, save a brief"
     <ul>
       <li><strong>Module 4</strong> — RAG fundamentals (embeddings, chunking, vector DBs)</li>
       <li><strong>Module 5</strong> — Agentic RAG (your agent retrieves &amp; cites)</li>
-      <li><strong>Module 6</strong> — Wrap it as a FastAPI service in Docker, ready to deploy</li>
+      <li><strong>Module 6</strong> — Wrap it as a FastAPI service in Docker, deploy-ready</li>
     </ul>
     <blockquote class="warning">
       Homework: keep your <code>.env</code> &amp; venv intact. Bring laptops charged.
     </blockquote>
+    <aside class="notes">
+      "Tomorrow is where it gets real. We take the agent you built tonight and we feed it your data.
+      Your docs. Your knowledge base. Your weird internal stuff. Then we wrap it in an API so it's
+      not just running on your laptop — it's a service other things can call. By end of Day 2
+      you have something deployable."
+      "Don't blow up your venv. Don't reset your `.env`. Bring chargers. 5 PM tomorrow."
+    </aside>
   </section>
 
   <section class="title-slide">
@@ -725,6 +923,12 @@ $ python lab3.py "Latest agentic AI papers, save a brief"
       <strong>Danielle Bagaforo Meer</strong><br>
       Day 1 · eCloudValley × AWS Office BGC
     </div>
+    <aside class="notes">
+      "Floor's open. Real questions, dumb questions, half-baked questions — all good.
+      The ones you'll regret are the ones you didn't ask."
+      Take questions until they dry up or until 8:00, whichever comes first. Don't run over.
+      Salamat — see you tomorrow.
+    </aside>
   </section>
 </section>
 
