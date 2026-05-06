@@ -541,252 +541,241 @@ agent = Agent(
 <!-- ========== MODULE 6 DIVIDER ========== -->
 <section class="section-divider">
   <div class="module-num">Module 06 · 50 minutes</div>
-  <h1>Cloud &amp; Data Platform Integration</h1>
-  <p class="muted">From your laptop to a deployable, observable, evaluable service.</p>
+  <h1>Multi-Agent Systems</h1>
+  <p class="muted">When one agent isn't enough — and how to compose specialists without making a mess.</p>
   <aside class="notes">
-    "Last module. Last lab. We take the agent off your laptop and turn it into a service. By the end
-    of this module you'll have a Docker container running on your machine that another process —
-    or another developer — can hit with a curl. That's a real artifact."
+    "Last module. Last lab. We've spent two days on a single agent — give it tools, give it memory,
+    give it docs, give it citations. That covers most of what you'll build for the next year.
+    But sometimes one agent isn't the right shape. Tonight we learn when to split."
   </aside>
 </section>
 
 <!-- ========== MODULE 6 ========== -->
 <section>
   <section>
-    <h2>The production checklist</h2>
-    <table>
-      <tr><th>Concern</th><th>Question to answer</th></tr>
-      <tr><td>Observability</td><td>Can I see every tool call &amp; token a user generated?</td></tr>
-      <tr><td>Evaluation</td><td>Did this PR make the agent better or worse, measurably?</td></tr>
-      <tr><td>Cost</td><td>What's a P95 conversation cost? Where's the budget kill-switch?</td></tr>
-      <tr><td>Latency</td><td>P95 first-token? P95 final-token? Cold start?</td></tr>
-      <tr><td>Guardrails</td><td>Can the agent leak data, run shell, or call paid APIs unbounded?</td></tr>
-      <tr><td>Failure</td><td>What happens on rate-limit, model 5xx, or vector DB outage?</td></tr>
-    </table>
+    <h2>When one agent isn't enough</h2>
+    <ul>
+      <li><strong class="accent-cyan">Conflicting goals.</strong> "Stay grounded in docs" vs. "speculate freely about the industry" — same prompt can't do both.</li>
+      <li><strong class="accent-mint">Different tools.</strong> A docs RAG agent and a SQL-querying agent need different guardrails and different temperatures.</li>
+      <li><strong class="accent-amber">Specialization beats generality.</strong> A focused 5-line system prompt beats a 50-line "do everything" prompt.</li>
+      <li><strong class="accent-pink">Parallelism.</strong> Two specialists can answer in parallel; one big agent can't.</li>
+    </ul>
+    <blockquote class="success">
+      Multi-agent = the same instinct as splitting a 500-line function into named helpers.
+    </blockquote>
     <aside class="notes">
-      "Six rows. This is the difference between a demo and a service. Most agentic AI demos pass
-      zero of these. Most production agentic systems pass four. The teams that pass all six are
-      the ones whose CEOs sleep at night."
-      "We're not going to fully solve all six tonight — that's a whole engineering team for a
-      quarter. But we're going to set the foundations so you know what you're looking at when your
-      product manager asks 'is it ready?'"
+      "Four reasons to split. The biggest one is the first — when goals genuinely conflict.
+      A docs-grounded specialist that refuses to speculate, vs. a web researcher whose entire job
+      IS to speculate. Same prompt can't do both well. Different specialists can."
+      "Same instinct as splitting a giant function. You're not splitting because the framework
+      told you to. You're splitting because the parts have different jobs."
     </aside>
   </section>
 
   <section>
-    <h2>Wrap an agent in FastAPI</h2>
+    <h2>Three multi-agent patterns</h2>
+    <div class="columns-3">
+      <div class="card">
+        <h4 class="accent-cyan">Route</h4>
+        <p class="muted" style="font-size:0.85em">Coordinator picks <em>one</em> specialist, hands off, returns its answer verbatim.</p>
+        <p style="font-size:0.8em"><em>Use when:</em> questions cleanly belong to exactly one specialist.</p>
+      </div>
+      <div class="card">
+        <h4 class="accent-mint">Coordinate</h4>
+        <p class="muted" style="font-size:0.85em">Coordinator dispatches to one or more specialists in parallel, then merges the answers.</p>
+        <p style="font-size:0.8em"><em>Use when:</em> some questions need both perspectives.</p>
+      </div>
+      <div class="card">
+        <h4 class="accent-amber">Collaborate</h4>
+        <p class="muted" style="font-size:0.85em">Specialists talk to each other in turns until they reach a consensus answer.</p>
+        <p style="font-size:0.8em"><em>Use when:</em> the answer needs critique / iteration (writer + editor).</p>
+      </div>
+    </div>
+    <aside class="notes">
+      "Three flavors. Agno calls them route, coordinate, collaborate — those are the literal mode
+      strings. Other frameworks have different names for the same ideas. Pattern matters more than
+      vocabulary."
+      "Default to coordinate. It handles the common cases — pure docs question, pure web question,
+      and the comparison question that needs both. Route is too rigid for most product UIs.
+      Collaborate is powerful but expensive — every turn is more tokens."
+    </aside>
+  </section>
+
+  <section>
+    <h2>Anatomy of a Team</h2>
     <pre><code data-trim data-line-numbers class="language-python">
-from fastapi import FastAPI
-from pydantic import BaseModel
+from agno.team import Team
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 
-app = Agent(
+docs_specialist = Agent(
+    name="Docs Specialist",
+    role="Answer product / docs questions with citations.",
     model=OpenAIChat(id="gpt-4o-mini"),
     knowledge=knowledge,
     search_knowledge=True,
+    instructions=["Cite every claim with [source: ...].", ...],
 )
 
-api = FastAPI()
-
-class Ask(BaseModel):
-    question: str
-    session_id: str | None = None
-
-@api.post("/ask")
-def ask(payload: Ask):
-    result = app.run(payload.question, session_id=payload.session_id)
-    return {"answer": result.content, "session_id": result.session_id}
-    </code></pre>
-    <aside class="notes">
-      "FastAPI. Pydantic schema for the input. One POST endpoint. That's the entire web layer."
-      "If you've shipped any Python API in the last five years, this is muscle memory. The agent
-      becomes just another dependency in your FastAPI app. No special framework, no agent-specific
-      runtime, just a function call inside a route handler."
-    </aside>
-  </section>
-
-  <section>
-    <h2>Containerize</h2>
-    <pre><code data-trim class="language-dockerfile">
-FROM python:3.12-slim
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-EXPOSE 8000
-CMD ["uvicorn", "main:api", "--host", "0.0.0.0", "--port", "8000"]
-    </code></pre>
-    <pre><code data-trim class="language-yaml">
-# docker-compose.yml
-services:
-  agent:
-    build: .
-    ports: ["8000:8000"]
-    env_file: .env
-    volumes:
-      - ./chroma_db:/app/chroma_db   # persistent vector store
-    </code></pre>
-    <aside class="notes">
-      "Dockerfile, compose file. Boring. That's the goal — make the agent a boring service so the
-      rest of your infrastructure can treat it like one. The volume mount on the chroma_db folder
-      matters — without it, your container loses its vector store on every restart and re-embeds
-      everything. That's slow and expensive."
-    </aside>
-  </section>
-
-  <section>
-    <h2>Deployment paths</h2>
-    <table>
-      <tr><th>Where</th><th>Service</th><th>When it fits</th></tr>
-      <tr><td>AWS</td><td>ECS Fargate</td><td>You already have an AWS shop</td></tr>
-      <tr><td>AWS</td><td>Lambda + Mangum</td><td>Spiky traffic, pay-per-request</td></tr>
-      <tr><td>AWS</td><td>Bedrock Agents</td><td>Want a managed agent runtime</td></tr>
-      <tr><td>GCP</td><td>Cloud Run</td><td>Smallest ops surface for containers</td></tr>
-      <tr><td>Azure</td><td>Container Apps</td><td>Microsoft shop, scale-to-zero</td></tr>
-      <tr><td>Anywhere</td><td>Kubernetes</td><td>Already running k8s, want full control</td></tr>
-    </table>
-    <p class="muted">All of them eat your <code>Dockerfile</code> from the previous slide.</p>
-    <aside class="notes">
-      "Six ways to deploy a container. Pick the one your team already knows. The agent doesn't
-      care, the Dockerfile doesn't care, and frankly neither do I. Use what your ops people are
-      comfortable with — a great deployment your team can debug beats a fancy deployment they can't."
-      "If you genuinely have a greenfield choice and your traffic is moderate, Cloud Run or ECS
-      Fargate are the lowest-pain options. Lambda only if your traffic is bursty and you can live
-      with cold starts."
-    </aside>
-  </section>
-
-  <section>
-    <h2>Connecting to your data platform</h2>
-    <p>Most enterprise data lives in S3, Snowflake, Postgres, or BigQuery. Expose them as <em>tools</em>.</p>
-    <pre><code data-trim class="language-python">
-@tool
-def query_orders(customer_id: str, days: int = 30) -> list[dict]:
-    """List a customer's orders in the past N days. Use for support questions."""
-    rows = pg.execute(
-        "SELECT * FROM orders WHERE customer_id=%s AND created_at > now() - %s",
-        (customer_id, f"{days} days"),
-    ).fetchall()
-    return [dict(r) for r in rows][:50]   # always cap!
-
-agent = Agent(
+web_researcher = Agent(
+    name="Web Researcher",
+    role="Search the public web for general / industry questions.",
     model=OpenAIChat(id="gpt-4o-mini"),
-    tools=[query_orders, query_invoices, query_tickets],
-    instructions="You are a customer support agent. Use tools to look things up.",
+    tools=[DuckDuckGoTools()],
+    instructions=["Always include the URL.", ...],
+)
+
+team = Team(
+    name="Support Team",
+    mode="coordinate",
+    model=OpenAIChat(id="gpt-4o-mini"),   # ← the coordinator
+    members=[docs_specialist, web_researcher],
+    instructions=["Route docs questions to Docs Specialist...", ...],
+)
+
+team.print_response("Compare CloudKaiju Pro to similar managed services.")
+    </code></pre>
+    <aside class="notes">
+      "Three pieces. Two specialist agents, each with its own role and tools. One Team that wraps
+      them with its own model — that model is the coordinator. The coordinator's only job is to
+      read the question and decide who runs it."
+      "Notice the role= field on each member. The coordinator reads those to make routing decisions.
+      Write them like a job description: short, specific, exclusive. 'Docs questions with citations'
+      is a good role. 'Helpful assistant' is not."
+    </aside>
+  </section>
+
+  <section>
+    <h2>Designing the coordinator's prompt</h2>
+    <pre><code data-trim class="language-python">
+team = Team(
+    mode="coordinate",
+    members=[docs, web, calculator],
+    instructions=[
+        "CloudKaiju product / pricing / docs questions → Docs Specialist.",
+        "General industry / 'what's a good X' questions → Web Researcher.",
+        "Numerical pricing computations → Pricing Calculator.",
+        "If a question needs MORE than one, dispatch in parallel "
+        "and merge the replies into ONE coherent answer.",
+        "Always preserve citations and URLs from members — don't drop sources.",
+        "Refuse politely for off-topic (weather, sports, personal advice).",
+    ],
 )
     </code></pre>
     <blockquote class="warning">
-      <strong>Cap row counts.</strong> A LIMIT-less SELECT is how agents melt your data warehouse.
+      The coordinator's prompt is your <em>routing logic</em>. Vague prompt → confused routing → both members run on every question and double your bill.
     </blockquote>
     <aside class="notes">
-      "The other half of production agents. RAG handles unstructured docs. Tools handle structured
-      data. The pattern: every meaningful table or warehouse view becomes a tool."
-      "Look at line 8. CAP THE ROW COUNT. I cannot stress this enough. An agent calling a tool
-      without a LIMIT clause has melted more Snowflake bills than I'd like to admit. Always cap.
-      The model can ask for more if it needs more, but the default is bounded."
+      "The coordinator prompt is doing the work that a switch statement would do in regular code —
+      except it's a model, so you write it in English. The clearer you are, the cheaper the team runs."
+      "Watch for the failure mode where the coordinator dispatches every member on every question.
+      That's a vague prompt. Be explicit: this kind of question goes to this member, that kind goes
+      to that one. If you can't write the rule in English, you don't have a coordinator — you have
+      a kitchen-sink agent."
     </aside>
   </section>
 
   <section>
-    <h2>Observability: see every token</h2>
-    <pre><code data-trim class="language-python">
-# With Phoenix (open-source, self-hosted)
-from phoenix.otel import register
-register(project_name="cloudkaiju-support")
+    <h2>What the coordinator <em>actually</em> sees</h2>
+    <pre style="font-size:0.7em">
+   user ▸ Compare CloudKaiju Pro to similar managed services.
 
-# With Langfuse
-from langfuse.openai import openai      # drop-in replacement
-# All OpenAI calls are now traced.
-    </code></pre>
-    <p>You want answers to:</p>
+   coordinator ▸ This needs both. Dispatching:
+                 → Docs Specialist: "What's in CloudKaiju's Pro tier?"
+                 → Web Researcher:  "Managed services comparable to CloudKaiju Pro 2026"
+
+   Docs Specialist ▸ Pro: $499/mo, 99.9% SLA, [source: 03-pricing-and-sla.md]
+   Web Researcher  ▸ Comparable: Service A ($450, 99.9%), Service B ($600, 99.95%) [urls...]
+
+   coordinator ▸ Synthesizing both with sources preserved...
+                 → Returns one merged answer with citations + URLs.
+    </pre>
+    <aside class="notes">
+      "What the coordinator does — in plain English. It reads the question. It writes specific
+      sub-questions for each member. Each member runs in parallel. Their answers come back.
+      The coordinator merges them, keeping the source attribution from each."
+      "If you've written async code, the mental model is: the coordinator is doing
+      asyncio.gather across two specialists. Except they're LLMs, and the gather is implicit."
+    </aside>
+  </section>
+
+  <section>
+    <h2>Costs: count the calls</h2>
+    <table>
+      <tr><th>Setup</th><th>Calls per question</th><th>Latency</th></tr>
+      <tr><td>One agent</td><td>1 (+ tools)</td><td>1× model time</td></tr>
+      <tr><td>Team, route mode</td><td>2 (coordinator + 1 member)</td><td>~2× model time</td></tr>
+      <tr><td>Team, coordinate (1 member)</td><td>2 (coordinator + 1 member)</td><td>~2× model time</td></tr>
+      <tr><td>Team, coordinate (both members)</td><td>3 (coordinator + 2 in parallel)</td><td>~2× model time (parallel)</td></tr>
+      <tr><td>Team, collaborate</td><td>4–8+ (turns multiply)</td><td>3×–5× model time</td></tr>
+    </table>
+    <blockquote class="warning">
+      <strong>Coordinate &lt; collaborate.</strong> Always ask: would a single agent with two tools do this?
+    </blockquote>
+    <aside class="notes">
+      "Cost ladder. Adding a member doubles the calls minimum — coordinator + member is two model
+      calls before the user sees a response. That's not free."
+      "Before you reach for multi-agent, ask: would a single agent with both tools work? Often
+      the answer is yes, and you save half the cost. Multi-agent earns its keep when the
+      specialists genuinely have different goals — like our docs-grounded vs. web-speculating split.
+      Same goals, same tools? You built a slower single agent."
+    </aside>
+  </section>
+
+  <section>
+    <h2>Anti-patterns</h2>
     <ul>
-      <li>"Show me every conversation that took &gt;30s last hour"</li>
-      <li>"How many tool calls did the average session make today?"</li>
-      <li>"Which prompts cost the most tokens?"</li>
+      <li><strong class="accent-pink">"Researcher / Writer / Critic / Editor / Publisher"</strong> chains. Five-agent pipelines look impressive in demos and fall over in production.</li>
+      <li><strong class="accent-pink">Two members with the same tools.</strong> You've built one agent with extra steps.</li>
+      <li><strong class="accent-pink">Recursive teams calling teams.</strong> Costs and debugging time explode.</li>
+      <li><strong class="accent-pink">No tool-call cap.</strong> A team can loop more than a single agent. <code>tool_call_limit</code> on each member.</li>
+      <li><strong class="accent-pink">Vague coordinator prompt.</strong> "Pick whoever seems best" → dispatches everyone every time.</li>
     </ul>
     <aside class="notes">
-      "If you take one tool home from Day 2, take Phoenix or Langfuse. Pick whichever — they're both
-      good. Set it up before you need it."
-      "You will absolutely hit a bug in production where the model did something insane and you'll
-      have no idea what happened. With tracing, you scrub through the full conversation like a
-      video — every prompt, every tool call, every token. Without it, you're guessing. Don't guess
-      in production."
-    </aside>
-  </section>
-
-  <section>
-    <h2>Evaluation: do you actually know it works?</h2>
-    <pre><code data-trim class="language-python">
-# A minimal eval set
-EVAL_CASES = [
-    {"q": "How do I rotate API keys?",       "must_cite": "security.md"},
-    {"q": "What's the SLA on Pro tier?",     "must_cite": "pricing.md"},
-    {"q": "What's the weather?",             "must_refuse": True},
-]
-
-def eval_agent(agent, cases):
-    pass_, fail_ = 0, 0
-    for c in cases:
-        result = agent.run(c["q"])
-        ok = (
-            (c.get("must_cite") in result.content if c.get("must_cite") else True)
-            and (("don't" in result.content.lower() or "can't" in result.content.lower())
-                 if c.get("must_refuse") else True)
-        )
-        pass_ += ok; fail_ += not ok
-    return pass_, fail_
-    </code></pre>
-    <blockquote>Run this on every PR. Without it, you're flying blind.</blockquote>
-    <aside class="notes">
-      "Eval set. Twenty cases minimum. Run on every pull request, gate the merge on it."
-      "This is the unsexy thing that turns 'we built an AI feature' into 'we own an AI product.'
-      Without evals, your model upgrades are vibes. Someone bumps gpt-4o-mini to gpt-4o-something-new,
-      stuff breaks silently, you find out from a customer two weeks later. With evals, the upgrade
-      either passes or fails before it ships."
-      Beat. "If your team builds anything serious with agents, the eval suite is more important than
-      the agent."
+      "Five smells. The first one is the most common. Someone reads a paper, sees a five-stage
+      pipeline, builds it, ships it, and then can't figure out why it costs $4 per query and gets
+      stuck in loops. Resist the temptation. Two specialists is plenty for most products."
+      "The cap on tool calls per member matters more in a team than in a single agent — because
+      now you have multiple agents that can each loop. Cap them. Always."
     </aside>
   </section>
 
   <section class="lab-banner-section">
     <div class="lab-banner">
       <span class="lab-tag">Lab 6 · 20 minutes · Pairs</span>
-      <h3>Ship It: FastAPI + Docker</h3>
+      <h3>Build a Multi-Agent Team</h3>
     </div>
     <h3>Goal</h3>
     <ul>
-      <li>Wrap your Lab 5 agent in a FastAPI <code>POST /ask</code> endpoint</li>
-      <li>Containerize with the provided <code>Dockerfile</code></li>
-      <li>Run with <code>docker compose up</code></li>
-      <li><code>curl -X POST localhost:8000/ask -d '{"question":"..."}'</code> returns JSON</li>
+      <li>Wrap the Lab 5 RAG agent as a <strong>Docs Specialist</strong> member</li>
+      <li>Build a <strong>Web Researcher</strong> member with DuckDuckGo</li>
+      <li>Compose them into a <code>Team</code> in <code>coordinate</code> mode</li>
+      <li>Test the routing — docs question, web question, comparison, off-topic</li>
     </ul>
-    <p class="accent-cyan">→ Open <code>labs/day2/lab6_production_deploy/</code></p>
+    <p class="accent-cyan">→ Open <code>labs/day2/lab6_multi_agent_team/</code></p>
     <aside class="notes">
-      "Final lab. Twenty minutes. You're wrapping the agent from Lab 5 with a FastAPI endpoint and
-      containerizing it. Pass condition: `docker compose up`, then curl from another terminal,
-      get JSON back. Once you see the JSON, your agent is officially a service."
-      "I've seen people miss the moment because they were heads-down debugging. Don't. When the
-      first curl works, look up. Tell your pair. That's the moment it stops being a workshop and
-      starts being a thing you built."
+      "Final lab. Twenty minutes. Two specialists, one coordinator. Pass condition: ask a docs
+      question, the Docs Specialist runs alone. Ask a web question, the Web Researcher runs alone.
+      Ask a comparison question, both run in parallel and the coordinator merges them with sources
+      preserved. Once you see all three behaviors, you've built a working team."
+      "Watch the printed member calls. The fun moment is seeing the coordinator make different
+      decisions for different questions — that's the whole point of multi-agent."
     </aside>
   </section>
 
   <section>
     <h2>Module 6 recap</h2>
     <ul>
-      <li>FastAPI + Docker = portable, container-native deployment</li>
-      <li>Same image runs on ECS, Cloud Run, Container Apps, k8s</li>
-      <li>Data platforms become tools — with row caps</li>
-      <li>Phoenix / Langfuse give you the observability you need</li>
-      <li>Eval suite gates every PR</li>
+      <li>Split when goals conflict, tools differ, or specialization wins</li>
+      <li>Three modes: <strong class="accent-cyan">route</strong>, <strong class="accent-mint">coordinate</strong>, <strong class="accent-amber">collaborate</strong> — coordinate is the default</li>
+      <li>The coordinator prompt is your routing logic — write it explicitly</li>
+      <li>Cost: every member is at least one extra model call. Cap tool calls.</li>
+      <li>If two members share goals + tools, you have a slower single agent</li>
     </ul>
     <aside class="notes">
-      "Five bullets. Tape them above your monitor. This is what shipping looks like. Now —
-      capstone. Two or three of you demo your shipped agent. Pizza should be here."
+      "Five bullets. Tape them above your monitor. The biggest one is the last — multi-agent
+      should earn its keep. If you can't tell me in one sentence why each member exists, drop a member.
+      Now — capstone. Two or three of you demo your team. Pizza should be here."
     </aside>
   </section>
 </section>
