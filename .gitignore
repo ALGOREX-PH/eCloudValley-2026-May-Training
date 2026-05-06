@@ -37,3 +37,7 @@ Thumbs.db
 
 # Docker
 *.log
+
+# Internal/private materials — never commit
+Data/
+**/Data/
