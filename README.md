@@ -43,17 +43,17 @@ All code is in **Python**, all agents use the **[Agno](https://docs.agno.com)** 
 | 6:55 – 7:50 | Module 3 — Tools & Reasoning *(Lab 3)*                       |
 | 7:50 – 8:00 | Wrap-up                                                      |
 
-### Day 2 — RAG + Cloud Integration
+### Day 2 — RAG + Multi-Agent
 
-| Time        | Module                                                          |
-| ----------- | --------------------------------------------------------------- |
-| 5:00 – 5:10 | Welcome back                                                    |
-| 5:10 – 5:55 | Module 4 — RAG Fundamentals *(Lab 4)*                           |
-| 5:55 – 6:05 | Break                                                           |
-| 6:05 – 6:55 | Module 5 — Agentic RAG *(Lab 5)*                                |
-| 6:55 – 7:05 | Break                                                           |
-| 7:05 – 7:45 | Module 6 — Cloud & Data Platform Integration *(Lab 6)*          |
-| 7:45 – 8:00 | Capstone demos & close                                          |
+| Time        | Module                                              |
+| ----------- | --------------------------------------------------- |
+| 5:00 – 5:10 | Welcome back                                        |
+| 5:10 – 5:55 | Module 4 — RAG Fundamentals *(Lab 4)*               |
+| 5:55 – 6:05 | Break                                               |
+| 6:05 – 6:55 | Module 5 — Agentic RAG *(Lab 5)*                    |
+| 6:55 – 7:05 | Break                                               |
+| 7:05 – 7:45 | Module 6 — Multi-Agent Systems *(Lab 6)*            |
+| 7:45 – 8:00 | Capstone demos & close                              |
 
 ---
 
@@ -63,7 +63,6 @@ All code is in **Python**, all agents use the **[Agno](https://docs.agno.com)** 
 - Python **3.11 or newer** (`python --version`)
 - Git
 - A code editor (VS Code recommended)
-- Docker Desktop *(only required for Lab 6)*
 - The OpenAI API key sent to you by the speaker before Day 1
 
 Full step-by-step setup is in **[handouts/setup-guide.md](handouts/setup-guide.md)**.
