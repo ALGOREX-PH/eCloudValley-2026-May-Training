@@ -12,7 +12,7 @@ Ingest a folder of product documentation into a Chroma vector DB, then run simil
 - Agno's `Knowledge` abstraction
 - `ChromaDb` as a vector store
 - Document loading & chunking (Agno does this for you, but tunable)
-- Similarity search with `num_documents`
+- Similarity search with `max_results`
 - The effect of chunk size on retrieval quality
 
 ## The data
@@ -46,7 +46,7 @@ After it works, change one knob at a time:
 
 1. **Query different things.** Edit `QUERIES` in the script and re-run.
 2. **Bigger / smaller chunks.** Pass `chunk_size=1500` (or `200`) to the chunking strategy. Re-index. Compare.
-3. **Bigger `num_documents`.** Ask for top 10 instead of top 3 — see how relevance falls off.
+3. **Bigger `max_results`.** Ask for top 10 instead of top 3 — see how relevance falls off.
 4. **Delete `chroma_db/`** to force re-indexing from scratch.
 
 ## Common bugs

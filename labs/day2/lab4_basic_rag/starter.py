@@ -49,7 +49,7 @@ def main() -> None:
 
     for q in QUERIES:
         print(f"❓ {q}")
-        results = knowledge.search(q, num_documents=3)
+        results = knowledge.search(q, max_results=3)
         for i, r in enumerate(results, 1):
             preview = r.content[:160].replace("\n", " ")
             score = getattr(r, "score", None)

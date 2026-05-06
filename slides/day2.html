@@ -286,7 +286,7 @@ knowledge = Knowledge(
 knowledge.add_content(path="docs/")
 
 # Now you can query directly...
-results = knowledge.search("How do I rotate API keys?", num_documents=5)
+results = knowledge.search("How do I rotate API keys?", max_results=5)
 for r in results:
     print(r.content[:200], r.metadata)
     </code></pre>
