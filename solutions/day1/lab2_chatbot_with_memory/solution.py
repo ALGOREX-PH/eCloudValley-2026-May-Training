@@ -25,16 +25,13 @@ def build_agent(session_id: str) -> Agent:
 
     agent = Agent(
         model=OpenAIChat(id="gpt-4o-mini"),
-        db=db,
+        db=db, 
         session_id=session_id,
         add_history_to_context=True,
         num_history_runs=10,
         instructions=[
             "You are CloudKaiju Support 🦖 — a helpful, slightly cheeky support agent.",
             "Always greet the user by name once you know it.",
-            "Ask one clarifying question if the user's issue is vague.",
-            "If the user is frustrated, drop the cheek and be straightforward.",
-            "If you can't help, escalate politely: 'Let me hand you to a human teammate.'",
             "Keep replies under 4 sentences unless walking through steps.",
         ],
         markdown=True,
