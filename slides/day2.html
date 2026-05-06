@@ -33,7 +33,11 @@
     eCloudValley Philippines · AWS Office BGC · May 2026
   </div>
   <aside class="notes">
-    Welcome back. Quick recap of yesterday, then we go deep on retrieval and ship a real service.
+    Open easy. Don't read the title.
+    "Welcome back. Day 2 of 2. Last night your agent could search the public web. Tonight it learns
+    your data, gets opinions about what it should and shouldn't say, and ends the night running
+    inside a Docker container with a real API. By 8 PM, you have something deployable. That's the deal."
+    Don't linger.
   </aside>
 </section>
 
@@ -56,6 +60,13 @@
       </div>
     </div>
     <p>The agent could look up <em>anything on the public web</em>. Tonight we make it smart about <em>your</em> data.</p>
+    <aside class="notes">
+      "Quick recap. Three labs, three working agents. If anyone in your life tries to tell you that
+      wasn't real engineering, send them to me — I'll take it personally on your behalf."
+      Beat. "But here's the thing. Your agent could search the open web yesterday. Cool party trick.
+      Not useful for actual work. Tonight we plug it into your data — your docs, your tables, your
+      knowledge base — and we ship it as a service. That's the upgrade."
+    </aside>
   </section>
 
   <section>
@@ -64,12 +75,37 @@
       <tr><th>Time</th><th>What we do</th></tr>
       <tr><td>5:00 – 5:10</td><td>Recap &amp; setup check</td></tr>
       <tr><td>5:10 – 5:55</td><td><strong>Module 4</strong> — RAG fundamentals <span class="pill">Lab 4</span></td></tr>
-      <tr><td>5:55 – 6:05</td><td>☕ Break</td></tr>
-      <tr><td>6:05 – 6:55</td><td><strong>Module 5</strong> — Agentic RAG <span class="pill">Lab 5</span></td></tr>
-      <tr><td>6:55 – 7:05</td><td>☕ Break</td></tr>
-      <tr><td>7:05 – 7:45</td><td><strong>Module 6</strong> — Cloud &amp; data integration <span class="pill">Lab 6</span></td></tr>
-      <tr><td>7:45 – 8:00</td><td>Capstone demos &amp; close</td></tr>
+      <tr><td>5:55 – 6:45</td><td><strong>Module 5</strong> — Agentic RAG <span class="pill">Lab 5</span></td></tr>
+      <tr><td>6:45 – 7:35</td><td><strong>Module 6</strong> — Cloud &amp; data integration <span class="pill">Lab 6</span></td></tr>
+      <tr><td>7:35 – 8:00</td><td>Capstone demos &amp; close</td></tr>
     </table>
+    <aside class="notes">
+      "Three modules, three labs, same format as last night — step out whenever you need to,
+      interrupt me whenever something doesn't click, labs win if we run long."
+      "One difference tonight: the last 25 minutes are demos. Two or three of you will show your
+      shipped agent to the room. Pizza will be here by then. Eat while you demo. We close the night
+      honest, not polished."
+    </aside>
+  </section>
+
+  <section>
+    <h2>30-second setup check</h2>
+    <pre><code data-trim data-noescape class="language-bash">
+# In your activated venv:
+python -c "import agno, openai, chromadb, fastapi; print('ready')"
+
+# Docker is alive:
+docker --version
+    </code></pre>
+    <blockquote class="warning">
+      🖐️ Hand up if either command screams. We fix it now, not at 6:30 mid-Lab-4.
+    </blockquote>
+    <aside class="notes">
+      "Two commands. Same drill as yesterday. Hand up if either one fails. We're adding chromadb
+      and fastapi to the mix tonight, and Docker has to be running — not just installed, running.
+      Crack open Docker Desktop now if you haven't already. Spinning up Docker mid-lab adds five
+      minutes of ambient frustration nobody needs."
+    </aside>
   </section>
 </section>
 
@@ -78,6 +114,11 @@
   <div class="module-num">Module 04 · 45 minutes</div>
   <h1>RAG Fundamentals</h1>
   <p class="muted">Retrieval-Augmented Generation: the unglamorous workhorse of useful AI.</p>
+  <aside class="notes">
+    "Module 4. RAG. Retrieval-Augmented Generation. The least sexy term in modern AI. Also the
+    technique behind almost every production AI feature you've actually used. Quick theory, then
+    we build."
+  </aside>
 </section>
 
 <!-- ========== MODULE 4 ========== -->
@@ -93,6 +134,15 @@
     <blockquote class="success">
       RAG = "look it up before you answer."
     </blockquote>
+    <aside class="notes">
+      "Four reasons RAG exists. Memorize the first three, the fourth is just a bonus."
+      "Hallucination is the killer. Production AI projects die because someone shipped a model that
+      confidently lies, then a customer screenshots it, then it's on Twitter. RAG doesn't eliminate
+      hallucination — but it cuts it down enormously when the model can ground its answer in actual
+      retrieved text."
+      "Privacy — your internal data doesn't go into the model's weights. Period. RAG keeps it in a
+      database you control. That's also a regulatory answer when compliance asks where the data lives."
+    </aside>
   </section>
 
   <section>
@@ -110,6 +160,13 @@
    │                                  │         │  LLM → answer            │
    └──────────────────────────────────┘         └──────────────────────────┘
     </pre>
+    <aside class="notes">
+      "Two halves. Read them as two completely separate programs that share a database. Index runs
+      once, in batch, when your docs change. Query runs on every user request, has to be fast."
+      "People who put the embedding step inside their request handler get embarrassed in code
+      review. Don't be that person. Index ahead of time. Query at runtime. Different code paths,
+      different SLAs."
+    </aside>
   </section>
 
   <section>
@@ -131,6 +188,13 @@ client.embeddings.create(
               │   ─── far               │  cosine ≈ 0.13
    "tax law" ─┘                         ─┘
     </pre>
+    <aside class="notes">
+      "Embeddings. A list of numbers that captures meaning. Don't overthink it. The model has
+      decided that 'puppy' and 'dog' are close in meaning-space. We trust it."
+      "1536 numbers for `text-embedding-3-small`. Cheap, fast, good enough for 90% of use cases.
+      OpenAI also has `-3-large` at 3072 dims if you need precision and you're willing to pay for
+      it. Start small, upgrade only if eval scores tell you to."
+    </aside>
   </section>
 
   <section>
@@ -145,6 +209,15 @@ client.embeddings.create(
     <blockquote class="warning">
       <strong>Rule of thumb:</strong> 500–1000 tokens per chunk, 50–100 token overlap. Then iterate based on eval results.
     </blockquote>
+    <aside class="notes">
+      "This slide is the most under-rated thing in this whole training. Chunking. The entire quality
+      of your RAG system gets decided here, before any model is involved."
+      "I've watched teams tune prompts for two weeks when they should've tuned chunk size for thirty
+      seconds. Chunks too small — you fragment ideas, retrieve gibberish. Chunks too big — you bury
+      the relevant sentence in a wall of noise."
+      "Start with the rule of thumb. 500 to 1000 tokens, 50 to 100 overlap. Ship it. Then let your
+      eval set tell you whether to go up or down. Don't guess."
+    </aside>
   </section>
 
   <section>
@@ -158,6 +231,15 @@ client.embeddings.create(
       <tr><td><strong>Pinecone / Weaviate / Qdrant</strong></td><td>Managed SaaS, fully hosted</td><td>—</td></tr>
     </table>
     <p class="muted">Chroma is the right tool for a workshop. In production, your data plane usually picks for you.</p>
+    <aside class="notes">
+      "Five options, one decision. Tonight we use Chroma — it's the fastest path from zero to
+      working RAG, runs in-process, persists to a local folder."
+      "In production, the answer is almost never Chroma. It's whatever your data team already runs.
+      Postgres shop? pgvector. AWS shop? OpenSearch. Greenfield startup with budget? Pinecone or
+      Qdrant. The 'best' vector DB is the one your ops team won't fight you on."
+      Beat. "Don't pick a vector DB on Twitter recommendations. Pick the one that matches your
+      existing data plane. The agentic part of your system doesn't care which one you chose."
+    </aside>
   </section>
 
   <section>
@@ -177,6 +259,17 @@ client.embeddings.create(
       </div>
     </div>
     <blockquote>Start dense. Add hybrid when "exact match" queries fail. Add re-ranking last.</blockquote>
+    <aside class="notes">
+      "Four ways to find stuff. People treat them as a hierarchy where re-ranking is 'the best.'
+      That's not how it works. They have different jobs."
+      "Dense is great at meaning — 'how do I rotate keys' finds 'API key rotation procedure' even
+      with no shared words. Sparse is great at exact terms — invoice IDs, error codes, SKU numbers."
+      "Hybrid combines both. Almost always beats either one alone in eval. Re-ranking is the
+      expensive precision pass — retrieve 50 candidates with hybrid, re-rank to the best 5 with a
+      cross-encoder. Slow. Good. Use last."
+      "The order matters. Dense first, hybrid when exact-match queries start failing, re-rank when
+      precision is your bottleneck. Don't add re-ranking because a blog post said to."
+    </aside>
   </section>
 
   <section>
@@ -200,6 +293,13 @@ results = knowledge.search("How do I rotate API keys?", num_documents=5)
 for r in results:
     print(r.content[:200], r.metadata)
     </code></pre>
+    <aside class="notes">
+      "Six lines of meaningful code. Knowledge object, vector DB, ingest, search. That's a working
+      RAG pipeline."
+      "The hard part isn't this code. The hard part is what you put in `docs/`. Garbage docs, garbage
+      retrieval. The model can't fix bad source material. Treat your docs folder like production
+      data — clean it, version it, own it."
+    </aside>
   </section>
 
   <section class="lab-banner-section">
@@ -216,8 +316,12 @@ for r in results:
     </ul>
     <p class="accent-cyan">→ Open <code>labs/day2/lab4_basic_rag/</code></p>
     <aside class="notes">
-      Walk through this one with the room. Show the chroma_db/ folder appearing.
-      Show what happens when chunk size is too small (fragmented) and too big (irrelevant).
+      "Twenty minutes, instructor-led. We do this together. I want you to actually mess with
+      `chunk_size` — set it to 100, run a query, watch the retrieval get fragmented. Set it to 4000,
+      watch it dump irrelevant context into the answer. Find the sweet spot for the sample docs.
+      That intuition transfers to every dataset you'll ever work with."
+      "Watch your `chroma_db/` folder appear after ingest. That's a real persistence layer. Delete
+      it, re-run, it rebuilds. Same as Postgres in spirit, just smaller."
     </aside>
   </section>
 
@@ -229,14 +333,12 @@ for r in results:
       <li>Chunking is the most under-appreciated knob</li>
       <li>Chroma for dev; Postgres+pgvector or OpenSearch for prod</li>
     </ul>
+    <aside class="notes">
+      "RAG is unsexy. It's also the most reliable trick in the book. Anyone shipping production AI
+      today is doing some flavor of this. Now we make it smarter — let the agent decide whether,
+      what, and how to retrieve. Module 5."
+    </aside>
   </section>
-</section>
-
-<!-- ========== BREAK ========== -->
-<section>
-  <h1 class="huge-text accent-cyan" style="text-align:center; margin-top: 2em;">☕ Break</h1>
-  <p style="text-align:center; font-size:1.5em" class="muted">10 minutes.</p>
-  <p style="text-align:center; margin-top:2em">Back at <strong class="accent-mint">6:05</strong>.</p>
 </section>
 
 <!-- ========== MODULE 5 DIVIDER ========== -->
@@ -244,6 +346,11 @@ for r in results:
   <div class="module-num">Module 05 · 50 minutes</div>
   <h1>Agentic RAG</h1>
   <p class="muted">When the agent decides whether, what, and how to retrieve.</p>
+  <aside class="notes">
+    "Module 5. We take vanilla RAG and we make the agent the boss of it. The agent decides if it
+    needs to retrieve. It rewrites the query. It loops if one search wasn't enough. This is where
+    RAG starts feeling intelligent instead of mechanical."
+  </aside>
 </section>
 
 <!-- ========== MODULE 5 ========== -->
@@ -257,6 +364,15 @@ for r in results:
       <tr><td>Multi-step</td><td>One retrieval per request</td><td>Iterative — retrieve, think, retrieve again</td></tr>
       <tr><td>Failure mode</td><td>"I don't know" or hallucination</td><td>Agent reflects, tries different angle</td></tr>
     </table>
+    <aside class="notes">
+      "Read across the rows. Each row is an upgrade. The cost is more LLM calls — every retrieval
+      decision is a model call, every rewrite is a model call. The benefit is the agent stops being
+      dumb."
+      "Vanilla RAG retrieves on every query. User says 'hi'? It retrieves. Wasteful and sometimes
+      embarrassing — the answer ends up grounded in some random doc. Agentic RAG asks the question
+      first: do I actually need to look this up? Smart agents skip retrieval when they don't.
+      Smarter agents rewrite the query before searching. We're building the second kind."
+    </aside>
   </section>
 
   <section>
@@ -275,6 +391,13 @@ agent = Agent(
 )
     </code></pre>
     <p>Behind the scenes: <code>search_knowledge=True</code> registers a <code>search_knowledge_base</code> tool. The agent calls it when (and only when) it judges it needed.</p>
+    <aside class="notes">
+      "One flag. `search_knowledge=True`. That's the line that turns yesterday's chatbot into an
+      agentic RAG system. Conceptually huge. Technically: one bool."
+      "The rest is instructions. Read those carefully — they're the contract. 'Always cite source.'
+      'If not in the docs, say so explicitly.' The model will follow these if you state them
+      cleanly. Vague instructions, vague behavior. Specific instructions, specific behavior."
+    </aside>
   </section>
 
   <section>
@@ -288,6 +411,13 @@ Agent's rewrite:   "API key rotation procedure CloudKaiju"
 → much better hit on the docs
     </code></pre>
     <blockquote>Agno does this for you when <code>search_knowledge=True</code>. You can also drive it explicitly with a custom <code>search</code> tool.</blockquote>
+    <aside class="notes">
+      "Users type like users. Vector search wants engineering team English. The agent in the middle
+      bridges the gap."
+      "'What about the keys' becomes 'API key rotation procedure'. That's a 10× retrieval improvement
+      for free. You did not write the rewriter. The model is the rewriter. This is the part where
+      'agentic' starts paying for itself."
+    </aside>
   </section>
 
   <section>
@@ -303,6 +433,14 @@ Agent's rewrite:   "API key rotation procedure CloudKaiju"
           → "Added in v3: X, Y, Z. Removed: W. Cited: [...]"
     </pre>
     <p class="muted">No code change needed — the agent loops on its own, deciding when to stop.</p>
+    <aside class="notes">
+      "Watch the trace. Two retrievals, then synthesis. The agent decided to do two searches because
+      one wouldn't have answered the question. It also decided when to stop. You did not write that
+      loop. The model wrote that loop."
+      "This is the moment people get giddy about agents — and they should. But remember Module 1 from
+      yesterday: earn the agent. If your use case is one-shot Q&A, don't bolt this on. If your use
+      case actually needs comparison, decomposition, multi-step reasoning — this is the win."
+    </aside>
   </section>
 
   <section>
@@ -323,6 +461,15 @@ agent = Agent(
     ],
 )
     </code></pre>
+    <aside class="notes">
+      "Every line in this `instructions` list was paid for in production tears. Mine and other
+      people's. Let me walk through them."
+      "Citations — because users don't trust uncited AI output, and they shouldn't. Refuse off-topic
+      — because someone will ask your customer support agent to write a poem about their ex and
+      screenshot it for Twitter. Never invent — because the lawyers care, and so should you.
+      Account ID before customer data — because your security team really cares."
+      Beat. "Each line is a scar. You'll add your own scars as you ship."
+    </aside>
   </section>
 
   <section>
@@ -335,6 +482,14 @@ agent = Agent(
       <tr><td>Loops calling search forever</td><td>Set <code>tool_call_limit=5</code>. Add "stop after 3 searches" to instructions.</td></tr>
       <tr><td>Slow first response</td><td>Re-ranking is expensive. Cache or skip on common queries.</td></tr>
     </table>
+    <aside class="notes">
+      "Five bugs you'll meet. The first three are chunking problems wearing different masks — when
+      retrieval feels broken, look at chunking before you look at the model."
+      "The fourth is the scary one. Set `tool_call_limit`. Always. Same as yesterday — I'm not
+      paying your OpenAI bill, and infinite tool loops at 3 cents a call add up faster than you'd
+      think."
+      "The fifth is a UX issue, fix with caching."
+    </aside>
   </section>
 
   <section class="lab-banner-section">
@@ -350,6 +505,16 @@ agent = Agent(
       <li>Reports "not in docs" when honestly stumped</li>
     </ul>
     <p class="accent-cyan">→ Open <code>labs/day2/lab5_agentic_rag/</code></p>
+    <aside class="notes">
+      "Pairs, thirty minutes. Pass condition is three tests:
+      One — ask it something that's in the docs, get a cited answer.
+      Two — ask it the weather, get a polite refusal.
+      Three — ask it something out of scope but plausible, get 'not in the docs.'
+      Hit all three, you're done."
+      "I'll be walking around. The pattern I want to see: when something's off, your first move is
+      checking the trace, not changing the prompt. Read what was actually retrieved. The trace tells
+      you the bug nine times out of ten."
+    </aside>
   </section>
 
   <section>
@@ -363,21 +528,26 @@ agent = Agent(
       You now have an agent that knows its own data and admits its limits.
       Time to put it in front of users.
     </blockquote>
+    <aside class="notes">
+      "Two volunteers. One whose agent cited cleanly — show that to the room, that's the happy path.
+      One whose agent got stumped on something it should've found — that's the more useful demo,
+      because we dig into why and the whole room learns."
+      "Then ask the third question — what failure mode scares you most for production. Don't move
+      on until at least three people answer. The fear is the spec for Module 6."
+    </aside>
   </section>
-</section>
-
-<!-- ========== BREAK ========== -->
-<section>
-  <h1 class="huge-text accent-cyan" style="text-align:center; margin-top: 2em;">☕ Break</h1>
-  <p style="text-align:center; font-size:1.5em" class="muted">10 minutes.</p>
-  <p style="text-align:center; margin-top:2em">Back at <strong class="accent-mint">7:05</strong>.</p>
 </section>
 
 <!-- ========== MODULE 6 DIVIDER ========== -->
 <section class="section-divider">
-  <div class="module-num">Module 06 · 40 minutes</div>
+  <div class="module-num">Module 06 · 50 minutes</div>
   <h1>Cloud &amp; Data Platform Integration</h1>
   <p class="muted">From your laptop to a deployable, observable, evaluable service.</p>
+  <aside class="notes">
+    "Last module. Last lab. We take the agent off your laptop and turn it into a service. By the end
+    of this module you'll have a Docker container running on your machine that another process —
+    or another developer — can hit with a curl. That's a real artifact."
+  </aside>
 </section>
 
 <!-- ========== MODULE 6 ========== -->
@@ -393,6 +563,14 @@ agent = Agent(
       <tr><td>Guardrails</td><td>Can the agent leak data, run shell, or call paid APIs unbounded?</td></tr>
       <tr><td>Failure</td><td>What happens on rate-limit, model 5xx, or vector DB outage?</td></tr>
     </table>
+    <aside class="notes">
+      "Six rows. This is the difference between a demo and a service. Most agentic AI demos pass
+      zero of these. Most production agentic systems pass four. The teams that pass all six are
+      the ones whose CEOs sleep at night."
+      "We're not going to fully solve all six tonight — that's a whole engineering team for a
+      quarter. But we're going to set the foundations so you know what you're looking at when your
+      product manager asks 'is it ready?'"
+    </aside>
   </section>
 
   <section>
@@ -420,6 +598,12 @@ def ask(payload: Ask):
     result = app.run(payload.question, session_id=payload.session_id)
     return {"answer": result.content, "session_id": result.session_id}
     </code></pre>
+    <aside class="notes">
+      "FastAPI. Pydantic schema for the input. One POST endpoint. That's the entire web layer."
+      "If you've shipped any Python API in the last five years, this is muscle memory. The agent
+      becomes just another dependency in your FastAPI app. No special framework, no agent-specific
+      runtime, just a function call inside a route handler."
+    </aside>
   </section>
 
   <section>
@@ -446,6 +630,12 @@ services:
     volumes:
       - ./chroma_db:/app/chroma_db   # persistent vector store
     </code></pre>
+    <aside class="notes">
+      "Dockerfile, compose file. Boring. That's the goal — make the agent a boring service so the
+      rest of your infrastructure can treat it like one. The volume mount on the chroma_db folder
+      matters — without it, your container loses its vector store on every restart and re-embeds
+      everything. That's slow and expensive."
+    </aside>
   </section>
 
   <section>
@@ -460,6 +650,14 @@ services:
       <tr><td>Anywhere</td><td>Kubernetes</td><td>Already running k8s, want full control</td></tr>
     </table>
     <p class="muted">All of them eat your <code>Dockerfile</code> from the previous slide.</p>
+    <aside class="notes">
+      "Six ways to deploy a container. Pick the one your team already knows. The agent doesn't
+      care, the Dockerfile doesn't care, and frankly neither do I. Use what your ops people are
+      comfortable with — a great deployment your team can debug beats a fancy deployment they can't."
+      "If you genuinely have a greenfield choice and your traffic is moderate, Cloud Run or ECS
+      Fargate are the lowest-pain options. Lambda only if your traffic is bursty and you can live
+      with cold starts."
+    </aside>
   </section>
 
   <section>
@@ -484,6 +682,13 @@ agent = Agent(
     <blockquote class="warning">
       <strong>Cap row counts.</strong> A LIMIT-less SELECT is how agents melt your data warehouse.
     </blockquote>
+    <aside class="notes">
+      "The other half of production agents. RAG handles unstructured docs. Tools handle structured
+      data. The pattern: every meaningful table or warehouse view becomes a tool."
+      "Look at line 8. CAP THE ROW COUNT. I cannot stress this enough. An agent calling a tool
+      without a LIMIT clause has melted more Snowflake bills than I'd like to admit. Always cap.
+      The model can ask for more if it needs more, but the default is bounded."
+    </aside>
   </section>
 
   <section>
@@ -503,6 +708,14 @@ from langfuse.openai import openai      # drop-in replacement
       <li>"How many tool calls did the average session make today?"</li>
       <li>"Which prompts cost the most tokens?"</li>
     </ul>
+    <aside class="notes">
+      "If you take one tool home from Day 2, take Phoenix or Langfuse. Pick whichever — they're both
+      good. Set it up before you need it."
+      "You will absolutely hit a bug in production where the model did something insane and you'll
+      have no idea what happened. With tracing, you scrub through the full conversation like a
+      video — every prompt, every tool call, every token. Without it, you're guessing. Don't guess
+      in production."
+    </aside>
   </section>
 
   <section>
@@ -528,6 +741,15 @@ def eval_agent(agent, cases):
     return pass_, fail_
     </code></pre>
     <blockquote>Run this on every PR. Without it, you're flying blind.</blockquote>
+    <aside class="notes">
+      "Eval set. Twenty cases minimum. Run on every pull request, gate the merge on it."
+      "This is the unsexy thing that turns 'we built an AI feature' into 'we own an AI product.'
+      Without evals, your model upgrades are vibes. Someone bumps gpt-4o-mini to gpt-4o-something-new,
+      stuff breaks silently, you find out from a customer two weeks later. With evals, the upgrade
+      either passes or fails before it ships."
+      Beat. "If your team builds anything serious with agents, the eval suite is more important than
+      the agent."
+    </aside>
   </section>
 
   <section class="lab-banner-section">
@@ -543,6 +765,14 @@ def eval_agent(agent, cases):
       <li><code>curl -X POST localhost:8000/ask -d '{"question":"..."}'</code> returns JSON</li>
     </ul>
     <p class="accent-cyan">→ Open <code>labs/day2/lab6_production_deploy/</code></p>
+    <aside class="notes">
+      "Final lab. Twenty minutes. You're wrapping the agent from Lab 5 with a FastAPI endpoint and
+      containerizing it. Pass condition: `docker compose up`, then curl from another terminal,
+      get JSON back. Once you see the JSON, your agent is officially a service."
+      "I've seen people miss the moment because they were heads-down debugging. Don't. When the
+      first curl works, look up. Tell your pair. That's the moment it stops being a workshop and
+      starts being a thing you built."
+    </aside>
   </section>
 
   <section>
@@ -554,6 +784,10 @@ def eval_agent(agent, cases):
       <li>Phoenix / Langfuse give you the observability you need</li>
       <li>Eval suite gates every PR</li>
     </ul>
+    <aside class="notes">
+      "Five bullets. Tape them above your monitor. This is what shipping looks like. Now —
+      capstone. Two or three of you demo your shipped agent. Pizza should be here."
+    </aside>
   </section>
 </section>
 
@@ -568,6 +802,12 @@ def eval_agent(agent, cases):
       <li>What broke first when you scaled it up?</li>
     </ul>
     <p class="muted">Pizza is here. Eat while we demo.</p>
+    <aside class="notes">
+      "Two volunteers, maybe three if there's time. Demo the curl from your terminal so the room
+      sees the JSON come back live. Then walk us through what broke first — that's the most
+      useful part of the demo. Polished demos teach nothing. Honest demos teach everything."
+      "Eat while you demo. We close the night honest, not polished."
+    </aside>
   </section>
 
   <section>
@@ -591,6 +831,13 @@ def eval_agent(agent, cases):
       </div>
     </div>
     <p class="muted" style="margin-top:1em">Full reading list: <code>handouts/further-reading.md</code></p>
+    <aside class="notes">
+      "This week, this month. Don't try to do all of it at once. Pick one item per column. The
+      agents you ship in production six months from now will look like the agents you built tonight,
+      with these things layered on. Patience and iteration."
+      "If you do exactly one thing this week — replace the sample docs with your real ones. That
+      single move turns this workshop into something useful for your actual job."
+    </aside>
   </section>
 
   <section class="title-slide">
@@ -606,6 +853,15 @@ def eval_agent(agent, cases):
       <span class="divider"></span>
       <img src="assets/images/algorex-logo-black.png" alt="Algorex Technologies" class="logo-algorex">
     </div>
+    <aside class="notes">
+      "Ten hours. Two days. You walked in not knowing what 'agentic' meant. You leave with a
+      tool-using, RAG-powered agent running on your laptop, deployable as a Docker container,
+      with citations and guardrails. That's not a workshop certificate that gathers dust. That's
+      a real skill. You own it."
+      Pause.
+      "Stay in touch. Build things. Send me what you ship — I read everything."
+      "Thank you. Salamat. Go build."
+    </aside>
   </section>
 </section>
 
