@@ -93,19 +93,15 @@
     <h2>30-second setup check</h2>
     <pre><code data-trim data-noescape class="language-bash">
 # In your activated venv:
-python -c "import agno, openai, chromadb, fastapi; print('ready')"
-
-# Docker is alive:
-docker --version
+python -c "import agno, openai, chromadb; print('ready')"
     </code></pre>
     <blockquote class="warning">
-      🖐️ Hand up if either command screams. We fix it now, not at 6:30 mid-Lab-4.
+      🖐️ Hand up if it screams. We fix it now, not at 6:30 mid-Lab-4.
     </blockquote>
     <aside class="notes">
-      "Two commands. Same drill as yesterday. Hand up if either one fails. We're adding chromadb
-      and fastapi to the mix tonight, and Docker has to be running — not just installed, running.
-      Crack open Docker Desktop now if you haven't already. Spinning up Docker mid-lab adds five
-      minutes of ambient frustration nobody needs."
+      "One command. Same drill as yesterday. Hand up if it fails. We're adding chromadb to the
+      mix tonight — that's the only new dependency from Day 1. If your Day 1 venv worked,
+      your Day 2 venv will work."
     </aside>
   </section>
 </section>
