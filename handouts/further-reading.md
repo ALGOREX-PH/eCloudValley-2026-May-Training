@@ -72,16 +72,30 @@ These are the papers behind everything we built today. Read them in order; each 
 
 ---
 
-## Cloud deployment paths
+## Multi-agent systems (Module 6)
 
-You finished Lab 6 with a Dockerized FastAPI agent. Here's where to deploy it:
+The team you built in Lab 6 is the simplest useful multi-agent shape. To go deeper:
 
-- **AWS:** ECS Fargate (containers), Lambda (with Mangum for FastAPI), Bedrock Agents (managed runtime)
+- **Anthropic — *Building Effective Agents*** — the section on "Workflows vs. Agents" is the cleanest framing of routing/coordination. <https://www.anthropic.com/research/building-effective-agents>
+- **AutoGen (Microsoft Research)** — research-grade multi-agent conversations, useful as a vocabulary reference. <https://microsoft.github.io/autogen/>
+- **CrewAI** — opinionated framework for "Researcher / Analyst / Writer"-style crews. Read it for ideas, then resist the temptation to build a 5-agent pipeline.
+- **LangGraph** — graph-based orchestration when your routing has loops/branches that don't fit `coordinate` mode.
+- **Agno docs — `Team` reference:** <https://docs.agno.com/teams>
+
+Anti-patterns worth knowing: recursive teams, members with identical tools, missing tool-call caps, and "kitchen sink" coordinator prompts that route every question to every member.
+
+---
+
+## Cloud deployment paths *(when you're ready to ship)*
+
+The team is just a Python object — wrap it in FastAPI / Litestar / Flask the same way you would any service:
+
+- **AWS:** ECS Fargate (containers), Lambda (with Mangum), Bedrock Agents (managed runtime)
 - **GCP:** Cloud Run (containers), Vertex AI Agent Builder
 - **Azure:** Container Apps, Azure AI Foundry
 - **Vercel / Railway / Fly.io:** Fastest path to a public URL for prototypes
 
-For any of these: check the response time of your first prod request — agents can be slow on cold start. Add a warmup endpoint or use provisioned concurrency.
+For any of these: agents can be slow on cold start. Add a warmup endpoint or use provisioned concurrency.
 
 ---
 
