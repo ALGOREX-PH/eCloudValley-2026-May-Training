@@ -23,7 +23,7 @@ By the end of Day 2 you will have built — from scratch, on your own laptop —
 - Calls external tools (web search, custom functions)
 - Retrieves answers from your own documents (RAG)
 - Cites its sources and refuses out-of-scope questions
-- Runs as a containerized FastAPI service ready to deploy to any cloud
+- Works as part of a multi-agent team that routes questions between specialists
 
 All code is in **Python**, all agents use the **[Agno](https://docs.agno.com)** framework, and all model calls go through your **OpenAI** API key.
 
