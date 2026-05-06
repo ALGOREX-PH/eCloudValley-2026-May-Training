@@ -13,8 +13,8 @@ Build a chatbot for a fictional SaaS called **CloudKaiju** that:
 
 ## What you'll learn
 
-- `add_history_to_messages` — in-session memory
-- `SqliteStorage` — durable memory across processes
+- `add_history_to_context` — in-session memory
+- `SqliteDb` — durable memory across processes
 - `session_id` — how to resume the same conversation
 - Writing personality into `instructions`
 

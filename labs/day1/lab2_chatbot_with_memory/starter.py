@@ -7,8 +7,8 @@ Fill in the TODOs. The reference solution is in solutions/day1/lab2_chatbot_with
 """
 
 from agno.agent import Agent
+from agno.db.sqlite import SqliteDb
 from agno.models.openai import OpenAIChat
-from agno.storage.sqlite import SqliteStorage
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,16 +17,17 @@ load_dotenv()
 def build_agent(session_id: str) -> Agent:
     """Build the CloudKaiju support agent.
 
-    TODO 1 — Create a SqliteStorage that writes to agent_storage/chat.db
-             with a table named "chat_sessions".
+    TODO 1 — Create a SqliteDb that writes to agent_storage/chat.db
+             with a session_table named "chat_sessions".
+             SqliteDb(db_file="agent_storage/chat.db", session_table="chat_sessions")
     """
-    storage = ...  # TODO 1
+    db = ...  # TODO 1
 
     """TODO 2 — Create the Agent with:
                   - model: OpenAIChat(id="gpt-4o-mini")
-                  - storage: the storage you created above
+                  - db: the SqliteDb you created above
                   - session_id: the function arg
-                  - add_history_to_messages: True
+                  - add_history_to_context: True
                   - num_history_runs: 10
                   - instructions: a clear persona for CloudKaiju support
                   - markdown: True
