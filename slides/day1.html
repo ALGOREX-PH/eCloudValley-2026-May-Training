@@ -853,9 +853,34 @@ $ python lab3.py "Latest agentic AI papers, save a brief"
     <p class="accent-cyan">→ Open <code>labs/day1/lab3_tool_using_agent/</code></p>
     <aside class="notes">
       "Capstone of Day 1. If you finish this, you have built a real agent. Not a toy. A real one.
-      Thirty minutes, pairs. Walk around. If a pair finishes early — and some will — give them this
-      stretch goal: add a second custom tool that fetches the full text of a URL and summarizes it
-      before saving. That's a 'fetch_and_extract' kind of tool. Real research workflow."
+      Thirty minutes, pairs. Walk around. If a pair finishes early — and some will — point them to
+      Lab 3B (next slide). Same agent shape, but they steer it to preferred source domains and
+      pick the output format. Optional, no pressure to finish."
+    </aside>
+  </section>
+
+  <section class="lab-banner-section">
+    <div class="lab-banner" style="border-color: var(--accent-amber); background: linear-gradient(135deg, rgba(255,181,71,0.12) 0%, rgba(255,107,157,0.10) 100%);">
+      <span class="lab-tag" style="color: var(--accent-amber)">Lab 3B · Optional · Fast finishers</span>
+      <h3>Research Assistant Pro 🚀</h3>
+    </div>
+    <p>Same agent. Two new knobs:</p>
+    <div class="columns">
+      <div class="card">
+        <h4 class="accent-cyan">Preferred sources</h4>
+        <p style="font-size:0.85em">Pass <code>--sources arxiv.org anthropic.com ...</code> and the agent stitches them into <code>site:</code> filters.</p>
+      </div>
+      <div class="card">
+        <h4 class="accent-mint">Multi-format output</h4>
+        <p style="font-size:0.85em">Pass <code>--format docx</code> or <code>--format pdf</code> — the same brief, written by <code>python-docx</code> or <code>fpdf2</code>.</p>
+      </div>
+    </div>
+    <p class="accent-amber">→ Open <code>labs/day1/lab3b_research_pro/</code> &nbsp;·&nbsp; <code>pip install python-docx fpdf2</code></p>
+    <aside class="notes">
+      "Optional bonus. If you finished Lab 3 and the room hasn't moved on yet, do this. Two TODOs.
+      Same agent shape — you're swapping in a smarter save_note that branches on format, and you're
+      teaching the agent to prefer specific source domains via DuckDuckGo's site: operator.
+      Real-world useful — every PM has asked for a docx of something."
     </aside>
   </section>
 
