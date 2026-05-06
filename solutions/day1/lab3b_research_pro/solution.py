@@ -149,12 +149,19 @@ def build_agent(format: str, preferred_sites: list[str]) -> Agent:
             "If a preferred-source query returns nothing useful, you MAY drop the filter "
             "for ONE follow-up search — but mention in the brief which claims came from outside the preferred list.",
             "After at most 3 searches, STOP searching and write the brief.",
+            # — Anti-hallucination guardrails (critical) —
+            "CRITICAL: every URL in the brief MUST come from a successful web_search result. "
+            "Do NOT invent URLs from memory, do NOT reconstruct URLs from training data, do NOT guess.",
+            "If ALL of your searches return errors or empty results, write a brief whose Summary "
+            "states honestly: 'Web search returned no results for this topic. No reliable sources "
+            "were found.' Leave Key Findings and Sources empty. Then save and stop.",
+            "Only cite a URL if it appeared verbatim in a tool result you received this run.",
+            # — Output structure —
             "The brief must follow this exact structure:",
             "  # <Title>",
             "  ## Summary  (2–3 sentences)",
             "  ## Key Findings  (bullet list, each with a URL)",
             "  ## Sources  (numbered list of URLs)",
-            "Every factual claim must include a URL.",
             f"At the end, call save_note exactly once with format={format!r}.",
             "Then reply with a one-line confirmation including the file path.",
         ],
