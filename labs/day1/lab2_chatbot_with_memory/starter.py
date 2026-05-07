@@ -5,7 +5,7 @@ Build a CloudKaiju support chatbot that remembers users across process restarts.
 
 Fill in the TODOs. The reference solution is in solutions/day1/lab2_chatbot_with_memory/
 """
-
+from pathlib import Path
 from agno.agent import Agent
 from agno.db.sqlite import SqliteDb
 from agno.models.openai import OpenAIChat
@@ -13,6 +13,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+STORAGE_DIR = Path("agent_storage")
+STORAGE_DIR.mkdir(exist_ok=True)
 
 def build_agent(session_id: str) -> Agent:
     """Build the CloudKaiju support agent.
@@ -21,7 +23,10 @@ def build_agent(session_id: str) -> Agent:
              with a session_table named "chat_sessions".
              SqliteDb(db_file="agent_storage/chat.db", session_table="chat_sessions")
     """
-    db = ...  # TODO 1
+    db = SqliteDb(
+        db_file=str(STORAGE_DIR/ "chat.db"), 
+        session_table="chat_sessions",
+        ) # TODO 1
 
     """TODO 2 — Create the Agent with:
                   - model: OpenAIChat(id="gpt-4o-mini")
@@ -32,7 +37,19 @@ def build_agent(session_id: str) -> Agent:
                   - instructions: a clear persona for CloudKaiju support
                   - markdown: True
     """
-    agent = ...  # TODO 2
+    agent = agent = Agent(
+        model=OpenAIChat(id="gpt-4o-mini"),
+        db = db,
+        session_id = session_id,
+        add_history_to_context = True,
+        num_history_runs= 10,
+        instructions=[
+            "You are CloudKaiju Support 🦖 — a helpful, slightly cheeky support agent.",
+            "Always greet the user by name once you know it.",
+            "Keep replies under 4 sentences unless walking through steps.",
+        ],
+        markdown=True,
+        )  # TODO 2
 
     return agent
 
