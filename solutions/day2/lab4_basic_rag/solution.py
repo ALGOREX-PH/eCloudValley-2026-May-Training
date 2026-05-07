@@ -1,7 +1,7 @@
 """
 Lab 4 — Reference solution.
 
-Ingest CloudKaiju docs into Chroma, then run similarity queries.
+Ingest the Financial Wellness Journal PDF into Chroma, then run similarity queries.
 """
 
 from pathlib import Path
