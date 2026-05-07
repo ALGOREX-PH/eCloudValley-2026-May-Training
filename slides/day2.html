@@ -277,7 +277,7 @@ from agno.vectordb.chroma import ChromaDb
 
 knowledge = Knowledge(
     vector_db=ChromaDb(
-        collection="cloudkaiju-docs",
+        collection="fined_journal",
         path="chroma_db",
     ),
 )
@@ -286,7 +286,7 @@ knowledge = Knowledge(
 knowledge.add_content(path="docs/")
 
 # Now you can query directly...
-results = knowledge.search("How do I rotate API keys?", max_results=5)
+results = knowledge.search("How do I avoid a debt trap?", max_results=5)
 for r in results:
     print(r.content[:200], r.metadata)
     </code></pre>
@@ -380,9 +380,9 @@ agent = Agent(
     knowledge=knowledge,
     search_knowledge=True,   # 👈 the magic flag
     instructions=[
-        "Use the knowledge base to answer questions about CloudKaiju.",
-        "Always cite source: [filename, page #].",
-        "If the answer isn't in the docs, say so explicitly.",
+        "Use the knowledge base to answer personal-finance questions.",
+        "Always cite source: [filename, chapter or page].",
+        "If the answer isn't in the journal, say so explicitly.",
     ],
 )
     </code></pre>
@@ -400,11 +400,11 @@ agent = Agent(
     <h2>Query rewriting</h2>
     <p>Users ask short questions. Vector search wants <em>specific</em> queries. The agent rewrites:</p>
     <pre><code data-trim class="language-text">
-User:   "what about the keys"
+User:   "how do I not get scammed"
 
-Agent's rewrite:   "API key rotation procedure CloudKaiju"
+Agent's rewrite:   "investment scam warning signs Corporal Star case study"
 
-→ much better hit on the docs
+→ much better hit on the journal
     </code></pre>
     <blockquote>Agno does this for you when <code>search_knowledge=True</code>. You can also drive it explicitly with a custom <code>search</code> tool.</blockquote>
     <aside class="notes">
@@ -419,14 +419,14 @@ Agent's rewrite:   "API key rotation procedure CloudKaiju"
   <section>
     <h2>Multi-step retrieval</h2>
     <pre style="font-size:0.7em">
-   User:  "Which features were added between v2 and v3?"
+   User:  "What's the difference between saving and investing?"
 
-   Agent: → search_knowledge("CloudKaiju v2 changelog")
-          ← results: [v2.0, v2.1, v2.2 features]
-   Agent: → search_knowledge("CloudKaiju v3 changelog")
-          ← results: [v3.0, v3.1 features]
-   Agent: I now have both. Compute the diff:
-          → "Added in v3: X, Y, Z. Removed: W. Cited: [...]"
+   Agent: → search_knowledge("definition and goals of saving")
+          ← results: [Chapter 2 — saving tools, where to save]
+   Agent: → search_knowledge("difference saving insurance investment")
+          ← results: [Chapter 5 — saving vs insurance vs investment]
+   Agent: I have both. Synthesize the comparison:
+          → "Saving = ..., investing = ..., key differences ... [source: ...]"
     </pre>
     <p class="muted">No code change needed — the agent loops on its own, deciding when to stop.</p>
     <aside class="notes">
@@ -451,9 +451,9 @@ agent = Agent(
         "If a chunk doesn't cite, search again before answering.",
 
         # Guardrails
-        "Refuse non-CloudKaiju questions politely.",
-        "Never invent product features. If unsure, say 'I don't see that in the docs.'",
-        "Never reveal customer-specific data unless the user provides their account ID.",
+        "Refuse off-topic questions politely (weather, sports, politics).",
+        "Never invent advice. If unsure, say 'I don't see that in the journal.'",
+        "Never give regulated financial advice — always recommend a licensed advisor for big decisions.",
     ],
 )
     </code></pre>
@@ -604,9 +604,9 @@ from agno.team import Team
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 
-docs_specialist = Agent(
-    name="Docs Specialist",
-    role="Answer product / docs questions with citations.",
+fined_coach = Agent(
+    name="FinEd Coach",
+    role="Answer personal-finance questions from the journal with citations.",
     model=OpenAIChat(id="gpt-4o-mini"),
     knowledge=knowledge,
     search_knowledge=True,
@@ -615,21 +615,21 @@ docs_specialist = Agent(
 
 web_researcher = Agent(
     name="Web Researcher",
-    role="Search the public web for general / industry questions.",
+    role="Search the public web for current rates / news / BSP announcements.",
     model=OpenAIChat(id="gpt-4o-mini"),
     tools=[DuckDuckGoTools()],
     instructions=["Always include the URL.", ...],
 )
 
 team = Team(
-    name="Support Team",
+    name="Personal Finance Team",
     mode="coordinate",
     model=OpenAIChat(id="gpt-4o-mini"),   # ← the coordinator
-    members=[docs_specialist, web_researcher],
-    instructions=["Route docs questions to Docs Specialist...", ...],
+    members=[fined_coach, web_researcher],
+    instructions=["Route journal questions to FinEd Coach...", ...],
 )
 
-team.print_response("Compare CloudKaiju Pro to similar managed services.")
+team.print_response("What does the journal say about insurance, and what are typical premiums in PH right now?")
     </code></pre>
     <aside class="notes">
       "Three pieces. Two specialist agents, each with its own role and tools. One Team that wraps
@@ -646,15 +646,15 @@ team.print_response("Compare CloudKaiju Pro to similar managed services.")
     <pre><code data-trim class="language-python">
 team = Team(
     mode="coordinate",
-    members=[docs, web, calculator],
+    members=[fined, web, loan_calc],
     instructions=[
-        "CloudKaiju product / pricing / docs questions → Docs Specialist.",
-        "General industry / 'what's a good X' questions → Web Researcher.",
-        "Numerical pricing computations → Pricing Calculator.",
+        "Personal-finance concepts / case studies / journal content → FinEd Coach.",
+        "Current rates / BSP news / market data → Web Researcher.",
+        "Loan amortization / numeric finance computations → Loan Calculator.",
         "If a question needs MORE than one, dispatch in parallel "
         "and merge the replies into ONE coherent answer.",
         "Always preserve citations and URLs from members — don't drop sources.",
-        "Refuse politely for off-topic (weather, sports, personal advice).",
+        "Refuse politely for off-topic (weather, sports, non-finance advice).",
     ],
 )
     </code></pre>
@@ -674,16 +674,20 @@ team = Team(
   <section>
     <h2>What the coordinator <em>actually</em> sees</h2>
     <pre style="font-size:0.7em">
-   user ▸ Compare CloudKaiju Pro to similar managed services.
+   user ▸ What does the journal say about insurance, and what are
+          typical premiums in PH right now?
 
    coordinator ▸ This needs both. Dispatching:
-                 → Docs Specialist: "What's in CloudKaiju's Pro tier?"
-                 → Web Researcher:  "Managed services comparable to CloudKaiju Pro 2026"
+                 → FinEd Coach:     "Insurance types and goals from the journal"
+                 → Web Researcher:  "Average insurance premium rates Philippines 2026"
 
-   Docs Specialist ▸ Pro: $499/mo, 99.9% SLA, [source: 03-pricing-and-sla.md]
-   Web Researcher  ▸ Comparable: Service A ($450, 99.9%), Service B ($600, 99.95%) [urls...]
+   FinEd Coach    ▸ The journal covers life, health, and non-life insurance,
+                    motivated by Aling Yolanda's case study
+                    [source: financial-wellness-journal-english.pdf, ch. 3]
+   Web Researcher ▸ Typical PH life premiums: ~₱X–₱Y/month for ₱1M coverage
+                    [https://www.example.com/source]
 
-   coordinator ▸ Synthesizing both with sources preserved...
+   coordinator ▸ Synthesizing both, sources preserved...
                  → Returns one merged answer with citations + URLs.
     </pre>
     <aside class="notes">

@@ -2,8 +2,8 @@
 Lab 6 — Multi-Agent Team (20 min, paired)
 
 Build a Team that has two specialists:
-  - Docs Specialist  — RAG over the CloudKaiju docs (reuses Lab 4/5)
-  - Web Researcher   — DuckDuckGo for general-web questions
+  - FinEd Coach     — RAG over the Financial Wellness Journal (reuses Lab 4/5)
+  - Web Researcher  — DuckDuckGo for current rates / news / market info
 
 A coordinator routes the question, dispatches to one or both members,
 and synthesizes the final answer.
@@ -35,29 +35,28 @@ DB_PATH = LAB_DIR / "chroma_db"
 
 def build_knowledge() -> Knowledge:
     knowledge = Knowledge(
-        vector_db=ChromaDb(collection="cloudkaiju", path=str(DB_PATH)),
+        vector_db=ChromaDb(collection="fined_journal", path=str(DB_PATH)),
     )
     knowledge.add_content(path=DOCS_DIR)
     return knowledge
 
 
 # ---------------------------------------------------------------------------
-# TODO 1 — Build the Docs Specialist
+# TODO 1 — Build the FinEd Coach (Lab 5 agent, tightened for team use)
 # ---------------------------------------------------------------------------
-# This is the Lab 5 agent, slightly tightened for team use.
 # Requirements:
-#   - name="Docs Specialist"
-#   - role="Answer CloudKaiju product / docs questions with citations"
+#   - name="FinEd Coach"
+#   - role="Answer personal-finance questions from the Financial Wellness Journal with citations"
 #   - model=OpenAIChat(id="gpt-4o-mini")
 #   - knowledge=<the knowledge object passed in>
 #   - search_knowledge=True
 #   - instructions:
 #       * Always search the knowledge base before answering.
-#       * Cite every factual claim with [source: filename].
-#       * If the docs don't cover it, say "I don't see that in the docs."
-#       * Stay focused on CloudKaiju — don't speculate about other tools.
+#       * Cite every factual claim with [source: financial-wellness-journal-english.pdf].
+#       * If the journal doesn't cover it, say "I don't see that in the journal."
+#       * Stay focused on personal finance — defer current rates / news to the Web Researcher.
 #   - markdown=True
-def build_docs_specialist(knowledge: Knowledge) -> Agent:
+def build_fined_coach(knowledge: Knowledge) -> Agent:
     ...
 
 
@@ -66,7 +65,7 @@ def build_docs_specialist(knowledge: Knowledge) -> Agent:
 # ---------------------------------------------------------------------------
 # Requirements:
 #   - name="Web Researcher"
-#   - role="Search the public web for general / industry questions"
+#   - role="Search the public web for current rates, news, market data, BSP announcements"
 #   - model=OpenAIChat(id="gpt-4o-mini")
 #   - tools=[DuckDuckGoTools()]
 #   - tool_call_limit=4   # cap searches to keep latency / cost bounded
@@ -74,8 +73,8 @@ def build_docs_specialist(knowledge: Knowledge) -> Agent:
 #       * Search the web 1–3 times with focused queries.
 #       * Keep replies under 6 sentences.
 #       * Always include the URL for every claim you make.
-#       * If asked about CloudKaiju specifically, say
-#         "Defer to the Docs Specialist for product questions."
+#       * If asked about general personal-finance concepts, say
+#         "Defer to FinEd Coach for grounded personal-finance guidance."
 #   - markdown=True
 def build_web_researcher() -> Agent:
     ...
@@ -88,27 +87,28 @@ def build_web_researcher() -> Agent:
 # to one or both members and merge the results.
 #
 # Requirements:
-#   - name="CloudKaiju Support Team"
+#   - name="Personal Finance Team"
 #   - mode="coordinate"
 #   - model=OpenAIChat(id="gpt-4o-mini")   # this is the coordinator
-#   - members=[docs, web]
+#   - members=[fined, web]
 #   - show_members_responses=True
 #   - markdown=True
 #   - instructions:
 #       * Read the question and decide which member(s) should answer.
-#       * For CloudKaiju product/docs questions → Docs Specialist.
-#       * For general / industry / "what's a good X" questions → Web Researcher.
-#       * If the question needs both (e.g., comparison), dispatch both
-#         and merge their replies into ONE coherent answer.
-#       * Refuse off-topic questions politely (weather, sports, personal advice).
+#       * Personal-finance concepts / case studies / journal content → FinEd Coach.
+#       * Current rates, BSP announcements, market data, news → Web Researcher.
+#       * If the question needs both (e.g., "what does the journal say about
+#         insurance and what are current rates?"), dispatch both and merge.
+#       * Refuse off-topic questions politely (weather, sports, personal advice
+#         outside finance).
 #       * Always preserve the citations / URLs from members in the final answer.
-def build_team(docs: Agent, web: Agent) -> Team:
+def build_team(fined: Agent, web: Agent) -> Team:
     ...
 
 
 def repl(team: Team) -> None:
-    print("CloudKaiju Support Team 🦖🤝🌐  (Ctrl+C to exit)\n")
-    print("Try mixing docs questions with general-web questions.\n")
+    print("Personal Finance Team 💸🤝🌐  (Ctrl+C to exit)\n")
+    print("Try mixing journal questions with current-rates questions.\n")
     try:
         while True:
             q = input("you ▸ ").strip()
@@ -126,10 +126,10 @@ if __name__ == "__main__":
     knowledge = build_knowledge()
 
     print("🤖 Wiring up specialists...")
-    docs = build_docs_specialist(knowledge)
+    fined = build_fined_coach(knowledge)
     web = build_web_researcher()
 
     print("🤝 Composing the team...\n")
-    team = build_team(docs, web)
+    team = build_team(fined, web)
 
     repl(team)

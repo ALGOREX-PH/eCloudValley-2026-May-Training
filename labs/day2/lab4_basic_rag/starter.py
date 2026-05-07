@@ -22,7 +22,7 @@ DB_PATH = LAB_DIR / "chroma_db"
 
 def build_knowledge() -> Knowledge:
     """Build (and ingest, on first run) the Chroma-backed knowledge base."""
-    # TODO 1 — Create a ChromaDb pointed at DB_PATH, collection name "cloudkaiju".
+    # TODO 1 — Create a ChromaDb pointed at DB_PATH, collection name "fined_journal".
     vector_db = ...  # TODO 1
 
     # TODO 2 — Wrap it in a Knowledge object.
@@ -36,10 +36,10 @@ def build_knowledge() -> Knowledge:
 
 
 QUERIES = [
-    "How do I rotate API keys?",
-    "What's the SLA for the Pro tier?",
-    "Does CloudKaiju support OIDC?",
-    "What's the pricing for the Free plan?",
+    "What is financial wellness?",
+    "What kinds of insurance should I consider?",
+    "How do I avoid a debt trap?",
+    "What's the difference between saving, insurance, and investment?",
 ]
 
 

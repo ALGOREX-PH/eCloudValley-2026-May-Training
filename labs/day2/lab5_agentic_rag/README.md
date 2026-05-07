@@ -1,15 +1,15 @@
-# Lab 5 — Agentic Documentation Assistant
+# Lab 5 — Agentic Documentation Assistant (FinEd Coach)
 
 > **Time:** 30 minutes (paired)
 > **Format:** Work with a partner, fill in the TODOs
 
 ## Goal
 
-Build an agent that answers questions about CloudKaiju using the docs from Lab 4. The agent must:
+Build **FinEd Coach** — an agent that answers personal-finance questions using the Financial Wellness Journal from Lab 4. The agent must:
 
-- **Cite** every factual claim with the source filename
-- **Refuse** out-of-scope questions ("What's the weather?")
-- **Honestly say** "not in the docs" when stumped, instead of hallucinating
+- **Cite** every factual claim with the source file (and chapter where possible)
+- **Refuse** off-topic questions ("What's the weather?")
+- **Honestly say** "not in the journal" when stumped, instead of hallucinating
 - **Decide** when to search and when it already knows
 
 ## What you'll learn
@@ -28,31 +28,35 @@ python labs/day2/lab5_agentic_rag/starter.py
 You'll get an interactive prompt. Try these:
 
 ```
-> How do I rotate API keys?
-> Does CloudKaiju support OIDC on the Free tier?
-> What's the SLA for Enterprise?
-> What's the weather in Manila?     # should refuse
-> Who is the CEO?                   # should say "not in docs"
+> What is financial wellness?
+> What kinds of insurance should I consider?
+> What is a debt trap and how do I avoid it?
+> Tell me about Mang Rafael's saving problem.
+> What's the difference between saving, insurance, and investment?
+> What's the weather in Manila?               # should refuse
+> Who is the CEO of BPI?                      # should say "not in the journal"
 ```
 
 ## What "good" looks like
 
 | Question | Expected behavior |
 |---|---|
-| "How do I rotate API keys?" | Step-by-step from `02-security.md`, cited |
-| "Does CloudKaiju support OIDC on Free?" | "No, OIDC is Pro and Enterprise only" — cited |
-| "What's the SLA for Enterprise?" | "99.95% uptime, ..." cited from `03-pricing-and-sla.md` |
-| "What's the weather?" | Polite refusal: "I only answer questions about CloudKaiju" |
-| "What color is the logo?" | "I don't see that in the docs" |
+| "What is financial wellness?" | Concise definition pulled from Chapter 1, cited |
+| "What kinds of insurance should I consider?" | List from Chapter 3, cited |
+| "How do I avoid a debt trap?" | Tips from Chapter 4, cited |
+| "Tell me about Mang Rafael's saving problem" | Summary of the case study from Chapter 2, cited |
+| "What's the weather?" | Polite refusal: "I only answer personal-finance questions from the Financial Wellness Journal." |
+| "Who is the CEO of BPI?" | "I don't see that in the journal." |
 
 ## Stretch goals
 
 - Add a `--debug` flag that prints the full tool-call trace
-- Add a custom tool `report_gap(question)` that logs questions the agent couldn't answer (so PMs can prioritize doc updates)
+- Add a custom tool `report_gap(question)` that logs questions the agent couldn't answer (so the FinEd team can prioritize new content)
 - Try lowering the LLM temperature to 0 — see if hallucinations drop
+- Add a "give me a savings tip in Tagalog" path that translates the journal's advice
 
 ## Tips
 
-- The first time it runs, it ingests the docs (~5 sec). Subsequent runs reuse the index.
+- The first time it runs, it ingests the PDF (~10–20 sec for 55 pages). Subsequent runs reuse the index.
 - If it ever hallucinates a fact, watch the streamed tool-call output — did it actually search? Did the search return relevant chunks?
 - The instructions string is doing 80% of the work here. Iterate on it.

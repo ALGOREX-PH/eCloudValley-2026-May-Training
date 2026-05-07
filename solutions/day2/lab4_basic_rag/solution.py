@@ -20,7 +20,7 @@ DB_PATH = LAB_DIR / "chroma_db"
 
 def build_knowledge() -> Knowledge:
     vector_db = ChromaDb(
-        collection="cloudkaiju",
+        collection="fined_journal",
         path=str(DB_PATH),
     )
 
@@ -33,10 +33,10 @@ def build_knowledge() -> Knowledge:
 
 
 QUERIES = [
-    "How do I rotate API keys?",
-    "What's the SLA for the Pro tier?",
-    "Does CloudKaiju support OIDC?",
-    "What's the pricing for the Free plan?",
+    "What is financial wellness?",
+    "What kinds of insurance should I consider?",
+    "How do I avoid a debt trap?",
+    "What's the difference between saving, insurance, and investment?",
 ]
 
 

@@ -5,7 +5,7 @@
 
 ## Goal
 
-Ingest a folder of product documentation into a Chroma vector DB, then run similarity queries against it. Inspect what comes back and tune the retrieval.
+Ingest a real-world PDF into a Chroma vector DB, then run similarity queries against it. Inspect what comes back and tune the retrieval.
 
 ## What you'll learn
 
@@ -17,13 +17,11 @@ Ingest a folder of product documentation into a Chroma vector DB, then run simil
 
 ## The data
 
-Three markdown files about a fictional SaaS called **CloudKaiju** — a cloud-native monitoring platform. They cover overview, security, and pricing/SLAs. You'll re-use this dataset in Lab 5.
+A 55-page **Financial Wellness Journal** from BPI Foundation's FinEd program — covers saving, insurance, credit, and investing with case studies (Mang Rafael, Aling Yolanda, Teacher Mary, Corporal Star). You'll re-use this dataset in Lab 5 and Lab 6.
 
 ```
 labs/day2/lab4_basic_rag/docs/
-├── 01-overview.md
-├── 02-security.md
-└── 03-pricing-and-sla.md
+└── financial-wellness-journal-english.pdf
 ```
 
 > Drop your own PDFs / Markdown into `docs/` if you want — the lab works with anything Agno can read.

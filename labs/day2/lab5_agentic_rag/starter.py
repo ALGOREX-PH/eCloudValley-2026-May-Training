@@ -1,7 +1,8 @@
 """
 Lab 5 — Agentic Documentation Assistant (30 min, paired)
 
-The agent answers questions about CloudKaiju using the docs from Lab 4.
+The agent (FinEd Coach) answers personal-finance questions using the
+Financial Wellness Journal PDF from Lab 4.
 
 Run:
     python labs/day2/lab5_agentic_rag/starter.py
@@ -25,7 +26,7 @@ DB_PATH = LAB_DIR / "chroma_db"
 
 def build_knowledge() -> Knowledge:
     knowledge = Knowledge(
-        vector_db=ChromaDb(collection="cloudkaiju", path=str(DB_PATH)),
+        vector_db=ChromaDb(collection="fined_journal", path=str(DB_PATH)),
     )
     knowledge.add_content(path=DOCS_DIR)
     return knowledge
@@ -40,11 +41,15 @@ def build_agent(knowledge: Knowledge) -> Agent:
       - search_knowledge: True   (this is the agentic switch)
       - markdown: True
       - instructions: a list that ENFORCES:
-          1. Role: a CloudKaiju documentation assistant
-          2. CITE every factual claim with [source: filename]
-          3. REFUSE non-CloudKaiju questions politely
-          4. ADMIT when an answer isn't in the docs — DO NOT make things up
+          1. Role: "FinEd Coach" — a personal-finance coach grounded in the
+             Financial Wellness Journal
+          2. CITE every factual claim with [source: financial-wellness-journal-english.pdf]
+             (mention the chapter or page if you can infer it from the chunk)
+          3. REFUSE off-topic questions politely (weather, sports, politics) with
+             "I only answer personal-finance questions from the Financial Wellness Journal."
+          4. ADMIT when an answer isn't in the journal — DO NOT make things up
           5. SEARCH the knowledge base before answering anything factual
+          6. Keep replies under 6 sentences unless walking through a procedure
     """
     agent = ...  # TODO
 
@@ -52,7 +57,7 @@ def build_agent(knowledge: Knowledge) -> Agent:
 
 
 def repl(agent: Agent) -> None:
-    print("CloudKaiju Docs Bot 📚  (Ctrl+C to exit)\n")
+    print("FinEd Coach 💸  (Ctrl+C to exit)\n")
     try:
         while True:
             q = input("you ▸ ").strip()
