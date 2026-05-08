@@ -2,8 +2,11 @@
 Lab 4 — Reference solution.
 
 Ingest the Financial Wellness Journal PDF into Chroma, then run similarity
-queries and render the matched chunks (with source file + page number) using
-Agno's bundled Rich console.
+queries and render each matched chunk (source filename + page number +
+similarity distance + content preview) as a Rich panel.
+
+Rich is bundled with Agno's dependencies — same console primitives Agno's own
+agents use under the hood.
 """
 
 import sys
@@ -12,9 +15,9 @@ from pathlib import Path
 from agno.knowledge import Knowledge
 from agno.vectordb.chroma import ChromaDb
 from dotenv import load_dotenv
-from rich.console import Console
+from rich.console import Console, Group
 from rich.panel import Panel
-from rich.table import Table
+from rich.rule import Rule
 from rich.text import Text
 
 load_dotenv()
@@ -53,50 +56,46 @@ QUERIES = [
 ]
 
 
-def _preview(text: str, width: int = 220) -> str:
+def _preview(text: str, width: int = 320) -> str:
     cleaned = " ".join(text.split())
     return cleaned if len(cleaned) <= width else cleaned[: width - 1] + "…"
 
 
 def render_results(query: str, results) -> None:
-    if not results:
-        console.print(Panel(f"No matches for: {query}", style="yellow"))
-        return
+    console.print(Rule(Text(f"❓ {query}", style="bold cyan"), style="cyan"))
 
-    table = Table(
-        show_header=True,
-        header_style="bold cyan",
-        expand=True,
-        pad_edge=False,
-    )
-    table.add_column("#", justify="right", width=3, style="bold")
-    table.add_column("Source", style="green", no_wrap=True)
-    table.add_column("Page", justify="right", style="magenta", width=5)
-    table.add_column("Distance", justify="right", style="yellow", width=9)
-    table.add_column("Preview", overflow="fold", ratio=1)
+    if not results:
+        console.print("[yellow]  No matches.[/yellow]\n")
+        return
 
     for i, r in enumerate(results, 1):
         meta = r.meta_data or {}
         page = meta.get("page", "—")
         distance = meta.get("distances")
         distance_str = f"{distance:.4f}" if isinstance(distance, (int, float)) else "—"
+        source = r.name or "(unknown)"
 
-        table.add_row(
-            str(i),
-            r.name or "(unknown)",
-            str(page),
-            distance_str,
-            _preview(r.content),
+        header = Text.assemble(
+            ("#", "bold white"), (f"{i}", "bold white"),
+            ("  ·  ", "dim"),
+            ("page ", "magenta"), (str(page), "bold magenta"),
+            ("  ·  ", "dim"),
+            ("distance ", "yellow"), (distance_str, "bold yellow"),
+            ("  ·  ", "dim"),
+            (source, "green"),
         )
 
-    console.print(
-        Panel(
-            table,
-            title=Text(f"❓ {query}", style="bold white"),
-            border_style="cyan",
-            padding=(1, 1),
+        body = Text(_preview(r.content), style="white")
+
+        console.print(
+            Panel(
+                Group(header, Text(""), body),
+                border_style="cyan",
+                padding=(0, 1),
+            )
         )
-    )
+
+    console.print()
 
 
 def main() -> None:
@@ -107,11 +106,11 @@ def main() -> None:
         )
     )
     knowledge = build_knowledge()
+    console.print()
 
     for q in QUERIES:
         results = knowledge.search(q, max_results=3)
         render_results(q, results)
-        console.print()
 
 
 if __name__ == "__main__":
