@@ -6,6 +6,7 @@ queries and render the matched chunks (with source file + page number) using
 Agno's bundled Rich console.
 """
 
+import sys
 from pathlib import Path
 
 from agno.knowledge import Knowledge
@@ -17,6 +18,11 @@ from rich.table import Table
 from rich.text import Text
 
 load_dotenv()
+
+# Windows PowerShell legacy console can't encode emojis through Rich's
+# legacy renderer — force UTF-8 stdout so the panels render cleanly.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 LAB_DIR = Path(__file__).parent
 DOCS_DIR = LAB_DIR.parent.parent.parent / "labs" / "day2" / "lab4_basic_rag" / "docs"
