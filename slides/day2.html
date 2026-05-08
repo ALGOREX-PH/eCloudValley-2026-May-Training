@@ -144,18 +144,28 @@ python -c "import agno, openai, chromadb; print('ready')"
 
   <section>
     <h2>The vanilla RAG pipeline</h2>
-    <pre style="font-size:0.7em">
-   ┌──────────────────────────────────┐         ┌──────────────────────────┐
-   │ INDEX (one-time, batch)           │         │ QUERY (every request)     │
-   │                                  │         │                          │
-   │  raw docs                        │         │  user question           │
-   │     ↓ chunk                      │         │     ↓ embed              │
-   │  chunks                          │         │  query vector            │
-   │     ↓ embed                      │         │     ↓ similarity search  │
-   │  vectors → vector DB             │         │  top-k chunks            │
-   │                                  │         │     ↓ stuff into prompt  │
-   │                                  │         │  LLM → answer            │
-   └──────────────────────────────────┘         └──────────────────────────┘
+    <pre class="mermaid" style="background:transparent;box-shadow:none;">
+flowchart LR
+  subgraph IDX["INDEX &nbsp;·&nbsp; one-time, batch"]
+    direction TB
+    A["raw docs"] -->|chunk| B["chunks"]
+    B -->|embed| C["vectors"]
+    C --> D[("vector DB")]
+  end
+  subgraph QRY["QUERY &nbsp;·&nbsp; every request"]
+    direction TB
+    Q["user question"] -->|embed| QV["query vector"]
+    QV -->|similarity search| TK["top-k chunks"]
+    TK -->|stuff into prompt| P["prompt + context"]
+    P --> ANS["LLM answer"]
+  end
+  D -. retrieves .-> TK
+  classDef store fill:#1f2937,stroke:#22d3ee,stroke-width:2px,color:#e5e7eb;
+  classDef step  fill:#0b1220,stroke:#60a5fa,color:#e5e7eb;
+  classDef out   fill:#0b1220,stroke:#34d399,color:#e5e7eb;
+  class A,B,C,Q,QV,TK,P step;
+  class D store;
+  class ANS out;
     </pre>
     <aside class="notes">
       "Two halves. Read them as two completely separate programs that share a database. Index runs
@@ -860,6 +870,23 @@ team = Team(
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      background: 'transparent',
+      primaryColor: '#0b1220',
+      primaryTextColor: '#e5e7eb',
+      primaryBorderColor: '#60a5fa',
+      lineColor: '#94a3b8',
+      fontFamily: 'Inter, system-ui, sans-serif',
+    },
+    flowchart: { curve: 'basis', padding: 12 },
+  });
+</script>
 
 <script>
 Reveal.initialize({
